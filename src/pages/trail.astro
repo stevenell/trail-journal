@@ -1,0 +1,118 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import routeGeoJson from "../data/route.json";
+import photosData from "../data/photos.json";
+
+const photos = (photosData as any[]).filter((p) => p.day != null);
+---
+
+<BaseLayout title="Trail | Emily's PCT 2026" active="trail" fullBleed={true}>
+  <header class="site-header" style="position: fixed; left: 0; right: 0; top: 0;">
+    <div class="site-header__row">
+      <h1 class="site-header__title"><a href="/">Emily's PCT 2026</a></h1>
+      <span class="site-header__sub">Trail map</span>
+    </div>
+  </header>
+
+  <div class="trail-page">
+    <div class="trail-page__map" id="trailmap"></div>
+  </div>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+  <script is:inline define:vars={{ routeGeoJson, photos }}>
+    document.addEventListener("DOMContentLoaded", () => {
+      // eslint-disable-next-line no-undef
+      const L = window.L;
+      const map = L.map("trailmap", {
+        zoomControl: true,
+        scrollWheelZoom: true,
+      });
+
+      // base tiles - OpenTopoMap (terrain) is great for hiking; fall back to OSM
+      L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
+        maxZoom: 17,
+        attribution: 'Map &copy; <a href="https://opentopomap.org">OpenTopoMap</a> | © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
+
+      // route lines
+      const routeLayer = L.geoJSON(routeGeoJson, {
+        filter: (f) => f.geometry.type === "LineString",
+        style: (f) => ({
+          color: f.properties.color || "#666",
+          weight: 4,
+          opacity: 0.85,
+        }),
+      }).addTo(map);
+
+      // day-stop markers (camp / lodging)
+      const stopColors = { Camp: "#5b6e4d", Hostel: "#b85935", Airbnb: "#b85935" };
+      const stopFeatures = (routeGeoJson.features || []).filter((f) => f.geometry.type === "Point");
+      const stopGroup = L.layerGroup();
+      stopFeatures.forEach((f) => {
+        const [lon, lat] = f.geometry.coordinates;
+        const p = f.properties;
+        const fill = stopColors[p.stop_type] || "#666";
+        const marker = L.circleMarker([lat, lon], {
+          radius: 7,
+          color: "#fff",
+          weight: 2,
+          fillColor: fill,
+          fillOpacity: 1,
+        });
+        const slug = `day-${String(p.day || 0).padStart(2, "0")}`;
+        marker.bindPopup(
+          `<strong>Day ${p.day} · ${p.stop_type || "Stop"}</strong><br>` +
+          `<a href="/posts/${slug}">Read the day →</a>`
+        );
+        stopGroup.addLayer(marker);
+      });
+      stopGroup.addTo(map);
+
+      // photo cluster
+      // eslint-disable-next-line no-undef
+      const photoCluster = L.markerClusterGroup({
+        showCoverageOnHover: false,
+        maxClusterRadius: 50,
+        spiderfyOnMaxZoom: true,
+        iconCreateFunction: (cluster) => {
+          const count = cluster.getChildCount();
+          return L.divIcon({
+            html: `<div style="
+              background:#b85935;color:#fff;border:2px solid #fff;
+              border-radius:50%;width:36px;height:36px;
+              display:flex;align-items:center;justify-content:center;
+              font:600 0.85rem -apple-system,system-ui,sans-serif;
+              box-shadow:0 1px 4px rgba(0,0,0,.4);
+            ">${count}</div>`,
+            className: "",
+            iconSize: [36, 36],
+          });
+        },
+      });
+
+      photos.forEach((p) => {
+        const m = L.marker([p.lat, p.lon]);
+        const slug = `day-${String(p.day).padStart(2, "0")}`;
+        m.bindPopup(
+          `<a href="/posts/${slug}"><img src="/photos/${p.thumb}" width="160" alt=""></a>` +
+          `<br><a href="/posts/${slug}">Day ${p.day}</a>`
+        );
+        photoCluster.addLayer(m);
+      });
+      photoCluster.addTo(map);
+
+      // fit bounds to route
+      try {
+        map.fitBounds(routeLayer.getBounds(), { padding: [16, 16] });
+      } catch (_) {
+        map.setView([34.0, -116.7], 9);
+      }
+    });
+  </script>
+</BaseLayout>

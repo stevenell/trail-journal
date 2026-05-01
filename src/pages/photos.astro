@@ -1,0 +1,58 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Lightbox from "../components/Lightbox.astro";
+import photosData from "../data/photos.json";
+
+const photos = (photosData as any[])
+  .filter((p) => p.day != null)
+  .sort((a, b) => (a.taken_at || "").localeCompare(b.taken_at || ""));
+
+// group by day for headers
+const groups = new Map<number, any[]>();
+for (const p of photos) {
+  if (!groups.has(p.day)) groups.set(p.day, []);
+  groups.get(p.day)!.push(p);
+}
+const sortedGroups = Array.from(groups.entries()).sort((a, b) => a[0] - b[0]);
+
+// flat index for lightbox (matches the chronological order rendered)
+const flat = sortedGroups.flatMap(([, list]) => list);
+---
+
+<BaseLayout title="Photos | Emily's PCT 2026" active="photos">
+  <section class="section">
+    <h2 style="margin-top: 0;">All photos</h2>
+    <p style="color: var(--ink-soft); margin-top: -8px;">{flat.length} photos · tap any to view</p>
+
+    <div data-lightbox-grid>
+      {sortedGroups.map(([day, list]) => (
+        <div style="margin-bottom: 24px;">
+          <h3 style="margin: 0 0 8px; font-size: 0.95rem; color: var(--ink-soft);">
+            <a href={`/posts/day-${String(day).padStart(2, "0")}`} style="color: inherit;">
+              Day {day}
+            </a>
+            <span style="color: var(--line); margin: 0 6px;">·</span>
+            <span>{list[0]?.taken_at?.slice(0, 10) ?? ""}</span>
+          </h3>
+          <div class="photo-grid">
+            {list.map((p) => {
+              const i = flat.indexOf(p);
+              return (
+                <button
+                  type="button"
+                  class="photo-grid__item"
+                  data-photo-index={i}
+                  aria-label="Open photo"
+                >
+                  <img src={`/photos/${p.thumb}`} alt="" loading="lazy" />
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <Lightbox photos={flat} />
+</BaseLayout>

@@ -1,0 +1,130 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Lightbox from "../../components/Lightbox.astro";
+import { getCollection, render } from "astro:content";
+import photosData from "../../data/photos.json";
+
+export async function getStaticPaths() {
+  const days = await getCollection("days");
+  return days.map((d) => ({
+    params: { slug: d.id.replace(/\.md$/, "") },
+    props: { day: d },
+  }));
+}
+
+const { day } = Astro.props;
+const { Content } = await render(day);
+
+const photos = (photosData as any[])
+  .filter((p) => p.day === day.data.day)
+  .sort((a, b) => (a.taken_at || "").localeCompare(b.taken_at || ""));
+
+const days = (await getCollection("days")).sort((a, b) => a.data.day - b.data.day);
+const idx = days.findIndex((d) => d.data.day === day.data.day);
+const prev = idx > 0 ? days[idx - 1] : null;
+const next = idx < days.length - 1 ? days[idx + 1] : null;
+
+// Extract just the numeric portion (handles "18.12 miles", "1,095.06", etc.)
+function num(s: string | undefined | null): string | null {
+  if (!s) return null;
+  const m = s.match(/[\d,]+(?:\.\d+)?/);
+  return m ? m[0] : null;
+}
+function asFloat(s: string | undefined | null): number | null {
+  const n = num(s);
+  if (n == null) return null;
+  const v = parseFloat(n.replace(/,/g, ""));
+  return Number.isFinite(v) ? v : null;
+}
+
+const milesToday = num(day.data.miles_today);
+const onPct = num(day.data.total_pct);
+const allIn = num(day.data.total_all);
+const milesToGo = num(day.data.miles_to_go); // first value before "//"
+const sideMiles = (() => {
+  const a = asFloat(day.data.total_all);
+  const b = asFloat(day.data.total_pct);
+  if (a == null || b == null) return null;
+  const diff = a - b;
+  return diff > 0.05 ? diff.toFixed(2) : null;
+})();
+
+const stopVerb = ({
+  Camp: "Camped at",
+  Hostel: "Stayed at",
+  Airbnb: "Stayed at",
+} as Record<string, string>)[day.data.stop_type ?? ""] ?? "Stopped at";
+---
+
+<BaseLayout title={`Day ${day.data.day} | Emily's PCT 2026`} active="home">
+  <article class="section">
+    <p style="margin-bottom: 4px;">
+      <a href="/">← All days</a>
+    </p>
+    <h1 style="margin: 4px 0 4px;">Day {day.data.day}</h1>
+    <p style="margin: 0 0 16px; color: var(--ink-soft);">{day.data.date}</p>
+
+    <div class="day-card__stats">
+      {milesToday && <div class="day-card__stat"><strong>{milesToday}</strong> mi today</div>}
+      {onPct && <div class="day-card__stat"><strong>{onPct}</strong> on PCT</div>}
+      {allIn && sideMiles && (
+        <div class="day-card__stat" title={`${sideMiles} side-trail miles`}>
+          <strong>{allIn}</strong> all-in
+          <span style="color: var(--ink-soft); margin-left: 4px;">(+{sideMiles})</span>
+        </div>
+      )}
+      {milesToGo && <div class="day-card__stat">{milesToGo} to go</div>}
+      {day.data.stop_type && <div class="day-card__stat">{day.data.stop_type}</div>}
+    </div>
+
+    {day.data.goal && (
+      <p style="margin: 16px 0; color: var(--ink-soft);">
+        <strong style="color: var(--ink);">Goal:</strong> {day.data.goal}
+      </p>
+    )}
+
+    <div class="day-card__body" style="margin-top: 16px;">
+      <Content />
+    </div>
+
+    {day.data.lat != null && day.data.lon != null && (
+      <p class="stop-footer">
+        <span aria-hidden="true">📍</span> {stopVerb}{" "}
+        <a
+          href={`https://www.google.com/maps?q=${day.data.lat},${day.data.lon}`}
+          target="_blank"
+          rel="noopener"
+        >
+          {day.data.lat.toFixed(4)}, {day.data.lon.toFixed(4)}
+        </a>
+      </p>
+    )}
+
+    {photos.length > 0 && (
+      <>
+        <h2 style="margin-top: 28px;">Photos ({photos.length})</h2>
+        <div class="photo-grid" data-lightbox-grid>
+          {photos.map((p: any, i: number) => (
+            <button
+              type="button"
+              class="photo-grid__item"
+              data-photo-index={i}
+              data-photo-file={p.file}
+              data-photo-time={p.taken_at ?? ""}
+              aria-label="Open photo"
+            >
+              <img src={`/photos/${p.thumb}`} alt="" loading="lazy" />
+            </button>
+          ))}
+        </div>
+      </>
+    )}
+
+    <nav style="margin-top: 32px; display: flex; justify-content: space-between; gap: 12px;">
+      <span>{prev && <a href={`/posts/day-${String(prev.data.day).padStart(2, "0")}`}>← Day {prev.data.day}</a>}</span>
+      <span>{next && <a href={`/posts/day-${String(next.data.day).padStart(2, "0")}`}>Day {next.data.day} →</a>}</span>
+    </nav>
+  </article>
+
+  <Lightbox photos={photos} />
+</BaseLayout>

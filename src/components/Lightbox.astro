@@ -1,0 +1,77 @@
+---
+interface Props {
+  photos: { file: string; taken_at?: string | null; day?: number | null }[];
+}
+const { photos } = Astro.props;
+---
+
+<div class="lightbox" hidden id="lightbox">
+  <button class="lightbox__btn lightbox__close" type="button" aria-label="Close">&times;</button>
+  <button class="lightbox__btn lightbox__prev" type="button" aria-label="Previous">‹</button>
+  <img class="lightbox__img" alt="" />
+  <button class="lightbox__btn lightbox__next" type="button" aria-label="Next">›</button>
+  <div class="lightbox__caption" id="lightbox-caption"></div>
+</div>
+
+<script is:inline define:vars={{ photos }}>
+  (function () {
+    const lb = document.getElementById("lightbox");
+    if (!lb) return;
+    const img = lb.querySelector(".lightbox__img");
+    const cap = document.getElementById("lightbox-caption");
+    const btnClose = lb.querySelector(".lightbox__close");
+    const btnPrev  = lb.querySelector(".lightbox__prev");
+    const btnNext  = lb.querySelector(".lightbox__next");
+    let idx = 0;
+
+    function fmtDate(iso) {
+      if (!iso) return "";
+      try {
+        const d = new Date(iso);
+        return d.toLocaleString(undefined, {
+          weekday: "short", month: "short", day: "numeric",
+          hour: "numeric", minute: "2-digit",
+        });
+      } catch (_) { return iso; }
+    }
+
+    function show(i) {
+      if (!photos.length) return;
+      idx = (i + photos.length) % photos.length;
+      const p = photos[idx];
+      img.src = "/photos/" + p.file;
+      cap.textContent = fmtDate(p.taken_at) + (p.day ? `  •  Day ${p.day}` : "");
+      lb.hidden = false;
+    }
+    function hide() { lb.hidden = true; img.src = ""; }
+
+    document.querySelectorAll("[data-lightbox-grid]").forEach((grid) => {
+      grid.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-photo-index]");
+        if (!btn) return;
+        show(parseInt(btn.getAttribute("data-photo-index"), 10));
+      });
+    });
+
+    btnClose.addEventListener("click", hide);
+    btnPrev.addEventListener("click", (e) => { e.stopPropagation(); show(idx - 1); });
+    btnNext.addEventListener("click", (e) => { e.stopPropagation(); show(idx + 1); });
+    lb.addEventListener("click", (e) => { if (e.target === lb) hide(); });
+    document.addEventListener("keydown", (e) => {
+      if (lb.hidden) return;
+      if (e.key === "Escape") hide();
+      else if (e.key === "ArrowLeft") show(idx - 1);
+      else if (e.key === "ArrowRight") show(idx + 1);
+    });
+
+    // basic swipe on touch
+    let startX = null;
+    lb.addEventListener("touchstart", (e) => { startX = e.touches[0].clientX; }, { passive: true });
+    lb.addEventListener("touchend", (e) => {
+      if (startX == null) return;
+      const dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 40) show(idx + (dx < 0 ? 1 : -1));
+      startX = null;
+    });
+  })();
+</script>

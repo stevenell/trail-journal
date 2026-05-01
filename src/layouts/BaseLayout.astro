@@ -1,0 +1,61 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  active?: "home" | "trail" | "photos";
+  fullBleed?: boolean;
+  description?: string;
+}
+
+const {
+  title = "Emily's PCT 2026",
+  active = "home",
+  fullBleed = false,
+  description = "Emily's Pacific Crest Trail journey, 2026.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#fbf7f0" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://tile.openstreetmap.org" />
+  </head>
+  <body>
+    <div class={fullBleed ? "app app--full" : "app"}>
+      {!fullBleed && (
+        <header class="site-header">
+          <div class="site-header__row">
+            <h1 class="site-header__title">
+              <a href="/">Emily's PCT 2026</a>
+            </h1>
+          </div>
+        </header>
+      )}
+
+      <main>
+        <slot />
+      </main>
+
+      <nav class="bottom-nav" aria-label="Main">
+        <a href="/" class={`bottom-nav__item ${active === "home" ? "is-active" : ""}`}>
+          <svg class="bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12 12 3l9 9"/><path d="M5 10v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10"/></svg>
+          Home
+        </a>
+        <a href="/trail" class={`bottom-nav__item ${active === "trail" ? "is-active" : ""}`}>
+          <svg class="bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6 3 9v12l6-3 6 3 6-3V6l-6 3-6-3z"/><path d="M9 6v12"/><path d="M15 9v12"/></svg>
+          Trail
+        </a>
+        <a href="/photos" class={`bottom-nav__item ${active === "photos" ? "is-active" : ""}`}>
+          <svg class="bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M8 6 9.5 4h5L16 6"/><circle cx="12" cy="13" r="4"/></svg>
+          Photos
+        </a>
+      </nav>
+    </div>
+  </body>
+</html>

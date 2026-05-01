@@ -1,0 +1,141 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import photosData from "../data/photos.json";
+
+const daysAsc = (await getCollection("days")).sort((a, b) => a.data.day - b.data.day);
+const daysDesc = [...daysAsc].reverse();
+const latestDay = daysAsc[daysAsc.length - 1];
+
+const totalDays = daysAsc.length;
+const totalMiles = (() => {
+  const v = latestDay?.data.total_pct;
+  if (!v) return null;
+  const num = parseFloat(v.replace(/,/g, ""));
+  return Number.isFinite(num) ? num : null;
+})();
+// Find the latest day that has total_all recorded — Emily only logs it
+// when she's actually walked off-trail miles, so it can lag behind.
+const latestAllIn = (() => {
+  for (const d of [...daysAsc].reverse()) {
+    const v = d.data.total_all;
+    if (!v) continue;
+    const num = parseFloat(v.replace(/,/g, ""));
+    if (Number.isFinite(num)) return num;
+  }
+  return null;
+})();
+const sideTrailMiles = (totalMiles != null && latestAllIn != null && latestAllIn - totalMiles > 0.05)
+  ? +(latestAllIn - totalMiles).toFixed(2)
+  : null;
+const milesToGo = (() => {
+  const v = latestDay?.data.miles_to_go;
+  if (!v) return null;
+  const num = parseFloat(v.split("/")[0].replace(/,/g, "").trim());
+  return Number.isFinite(num) ? num : null;
+})();
+
+const photosByDay = new Map<number, any[]>();
+for (const p of photosData as any[]) {
+  if (p.day == null) continue;
+  if (!photosByDay.has(p.day)) photosByDay.set(p.day, []);
+  photosByDay.get(p.day)!.push(p);
+}
+for (const list of photosByDay.values()) {
+  list.sort((a, b) => (a.taken_at || "").localeCompare(b.taken_at || ""));
+}
+
+function formatDate(iso: string): string {
+  const [y, m, d] = iso.split("-").map(Number);
+  const date = new Date(Date.UTC(y, m - 1, d));
+  return date.toLocaleDateString("en-US", {
+    weekday: "short", month: "short", day: "numeric", timeZone: "UTC",
+  });
+}
+
+function num(s: string | undefined | null): string | null {
+  if (!s) return null;
+  const m = s.match(/[\d,]+(?:\.\d+)?/);
+  return m ? m[0] : null;
+}
+function asFloat(s: string | undefined | null): number | null {
+  const n = num(s);
+  if (n == null) return null;
+  const v = parseFloat(n.replace(/,/g, ""));
+  return Number.isFinite(v) ? v : null;
+}
+function sideMilesFor(d: any): string | null {
+  const a = asFloat(d.data.total_all);
+  const b = asFloat(d.data.total_pct);
+  if (a == null || b == null) return null;
+  const diff = a - b;
+  return diff > 0.05 ? diff.toFixed(2) : null;
+}
+---
+
+<BaseLayout title="Emily's PCT 2026" active="home">
+  <section class="hero">
+    <h1>Emily's PCT 2026</h1>
+    <p class="hero__sub">Pacific Crest Trail · one day at a time</p>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat__num">{totalDays}</div>
+        <div class="hero-stat__label">Days</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat__num">{totalMiles ? totalMiles.toFixed(0) : "—"}</div>
+        <div class="hero-stat__label">
+          PCT miles
+          {sideTrailMiles != null && (
+            <span class="hero-stat__sub">+{sideTrailMiles} off-trail</span>
+          )}
+        </div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat__num">{milesToGo ? milesToGo.toFixed(0) : "—"}</div>
+        <div class="hero-stat__label">Miles to go</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    {daysDesc.map((d) => {
+      const slug = `day-${String(d.data.day).padStart(2, "0")}`;
+      const photos = (photosByDay.get(d.data.day) ?? []).slice(0, 6);
+      return (
+        <article class="card day-card">
+          <div class="day-card__head">
+            <div class="day-card__day">
+              <a href={`/posts/${slug}`}>Day {d.data.day}{d.data.stop_type ? ` · ${d.data.stop_type}` : ""}</a>
+            </div>
+            <div class="day-card__date">{formatDate(d.data.date)}</div>
+          </div>
+          <div class="day-card__stats">
+            {num(d.data.miles_today) && <div class="day-card__stat"><strong>{num(d.data.miles_today)}</strong> mi today</div>}
+            {num(d.data.total_pct) && <div class="day-card__stat"><strong>{num(d.data.total_pct)}</strong> on PCT</div>}
+            {num(d.data.total_all) && sideMilesFor(d) && (
+              <div class="day-card__stat" title={`${sideMilesFor(d)} side-trail miles`}>
+                <strong>{num(d.data.total_all)}</strong> all-in
+                <span style="color: var(--ink-soft); margin-left: 4px;">(+{sideMilesFor(d)})</span>
+              </div>
+            )}
+            {d.data.goal && <div class="day-card__stat">Goal: {d.data.goal}</div>}
+          </div>
+          {photos.length > 0 && (
+            <div class="photo-grid photo-grid--mini">
+              {photos.map((p: any) => (
+                <a class="photo-grid__item" href={`/posts/${slug}`}>
+                  <img src={`/photos/${p.thumb}`} alt="" loading="lazy" />
+                </a>
+              ))}
+            </div>
+          )}
+          <p style="margin: 14px 0 0 0;">
+            <a href={`/posts/${slug}`}>Read more →</a>
+          </p>
+        </article>
+      );
+    })}
+  </section>
+</BaseLayout>
