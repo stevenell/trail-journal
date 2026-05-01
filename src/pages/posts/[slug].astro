@@ -54,9 +54,35 @@ const stopVerb = ({
   Hostel: "Stayed at",
   Airbnb: "Stayed at",
 } as Record<string, string>)[day.data.stop_type ?? ""] ?? "Stopped at";
+
+// Build a 1-2 sentence Open Graph description from the body content.
+const rawBody = (day.body ?? "").replace(/\s+/g, " ").trim();
+function trimAtWord(s: string, max: number): string {
+  if (s.length <= max) return s;
+  const sliced = s.slice(0, max);
+  const lastSpace = sliced.lastIndexOf(" ");
+  return (lastSpace > max * 0.6 ? sliced.slice(0, lastSpace) : sliced).trimEnd() + "…";
+}
+const ogDescription = (() => {
+  const stats = [
+    milesToday ? `${milesToday} mi` : null,
+    day.data.goal ? `Goal: ${day.data.goal}` : null,
+    day.data.stop_type ? `${day.data.stop_type}` : null,
+  ].filter(Boolean).join(" · ");
+  const excerpt = trimAtWord(rawBody, 160);
+  return [stats, excerpt].filter(Boolean).join(" — ") || "Day on the PCT.";
+})();
+
+const ogImage = photos[0] ? `/photos/${photos[0].file}` : undefined;
 ---
 
-<BaseLayout title={`Day ${day.data.day} | Emily's PCT 2026`} active="home">
+<BaseLayout
+  title={`Day ${day.data.day} · Emily's PCT 2026`}
+  active="home"
+  description={ogDescription}
+  image={ogImage}
+  ogType="article"
+>
   <article class="section">
     <p style="margin-bottom: 4px;">
       <a href="/">← All days</a>

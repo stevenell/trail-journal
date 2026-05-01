@@ -71,9 +71,28 @@ function sideMilesFor(d: any): string | null {
   const diff = a - b;
   return diff > 0.05 ? diff.toFixed(2) : null;
 }
+
+// OG: latest day's first photo + stat-driven description.
+const latestPhoto = latestDay ? photosByDay.get(latestDay.data.day)?.[0] : null;
+const ogImage = latestPhoto ? `/photos/${latestPhoto.file}` : undefined;
+const ogDescription = (() => {
+  const parts: string[] = [];
+  if (totalDays) parts.push(`${totalDays} days`);
+  if (totalMiles) parts.push(`${totalMiles.toFixed(0)} PCT miles`);
+  if (milesToGo) parts.push(`${milesToGo.toFixed(0)} to go`);
+  const stats = parts.join(" · ");
+  return stats
+    ? `${stats}. Daily journal, photos, and trail map from Emily's 2026 PCT thru-hike.`
+    : "Daily journal, photos, and trail map from Emily's 2026 PCT thru-hike.";
+})();
 ---
 
-<BaseLayout title="Emily's PCT 2026" active="home">
+<BaseLayout
+  title="Emily's PCT 2026"
+  active="home"
+  description={ogDescription}
+  image={ogImage}
+>
   <section class="hero">
     <h1>Emily's PCT 2026</h1>
     <p class="hero__sub">Pacific Crest Trail · one day at a time</p>

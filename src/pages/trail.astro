@@ -6,7 +6,12 @@ import photosData from "../data/photos.json";
 const photos = (photosData as any[]).filter((p) => p.day != null);
 ---
 
-<BaseLayout title="Trail | Emily's PCT 2026" active="trail" fullBleed={true}>
+<BaseLayout
+  title="Trail map · Emily's PCT 2026"
+  description="Interactive map of Emily's PCT route, daily camp/lodging stops, and every geotagged photo."
+  active="trail"
+  fullBleed={true}
+>
   <header class="site-header" style="position: fixed; left: 0; right: 0; top: 0;">
     <div class="site-header__row">
       <h1 class="site-header__title"><a href="/">Emily's PCT 2026</a></h1>

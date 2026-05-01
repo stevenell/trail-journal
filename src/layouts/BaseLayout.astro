@@ -1,19 +1,40 @@
 ---
 import "../styles/global.css";
+import photosData from "../data/photos.json";
 
 interface Props {
   title?: string;
   active?: "home" | "trail" | "photos";
   fullBleed?: boolean;
   description?: string;
+  /** Site-relative path (e.g. "/photos/foo.jpg") — gets resolved against Astro.site for absolute OG URLs. */
+  image?: string;
+  /** og:type — "website" for index/photos/trail, "article" for individual day posts. */
+  ogType?: "website" | "article";
 }
 
+// Default OG image: the first photo on file, sorted chronologically.
+// Stable across builds (doesn't shift when new photos arrive).
+const defaultPhoto = (photosData as any[])
+  .filter((p) => p.file)
+  .sort((a, b) => (a.taken_at || "").localeCompare(b.taken_at || ""))[0];
+const DEFAULT_OG_IMAGE = defaultPhoto ? `/photos/${defaultPhoto.file}` : "/favicon.svg";
+
+const SITE_NAME = "Emily's PCT 2026";
+
 const {
-  title = "Emily's PCT 2026",
+  title = SITE_NAME,
   active = "home",
   fullBleed = false,
-  description = "Emily's Pacific Crest Trail journey, 2026.",
+  description = "Daily journal, photos, and trail map from Emily's 2026 Pacific Crest Trail thru-hike.",
+  image = DEFAULT_OG_IMAGE,
+  ogType = "website",
 } = Astro.props;
+
+// Resolve absolute URLs (OG/Twitter expects them).
+const siteOrigin = Astro.site ?? new URL("/", Astro.url);
+const ogImage = new URL(image, siteOrigin).toString();
+const canonicalUrl = new URL(Astro.url.pathname, siteOrigin).toString();
 ---
 
 <!doctype html>
@@ -23,7 +44,22 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#fbf7f0" />
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
     <title>{title}</title>
+
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content={`Photo from ${SITE_NAME}`} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
     <link rel="preconnect" href="https://tile.openstreetmap.org" />
   </head>
   <body>

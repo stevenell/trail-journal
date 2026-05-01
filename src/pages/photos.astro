@@ -19,7 +19,11 @@ const sortedGroups = Array.from(groups.entries()).sort((a, b) => a[0] - b[0]);
 const flat = sortedGroups.flatMap(([, list]) => list);
 ---
 
-<BaseLayout title="Photos | Emily's PCT 2026" active="photos">
+<BaseLayout
+  title="Photos · Emily's PCT 2026"
+  description={`${flat.length} geotagged photos from Emily's 2026 Pacific Crest Trail thru-hike.`}
+  active="photos"
+>
   <section class="section">
     <h2 style="margin-top: 0;">All photos</h2>
     <p style="color: var(--ink-soft); margin-top: -8px;">{flat.length} photos · tap any to view</p>
