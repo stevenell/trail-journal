@@ -5,5 +5,5 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   // Used by Astro.site for absolute URLs (Open Graph, sitemap, etc.).
   // Update this when a custom domain is added.
-  site: "https://trail-journal.stevenwellingson.workers.dev",
+  site: "https://trail.dustandstars.space",
 });
