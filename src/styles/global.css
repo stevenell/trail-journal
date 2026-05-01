@@ -264,7 +264,8 @@ button { font: inherit; cursor: pointer; }
   background: rgba(20, 16, 12, 0.92);
   display: flex;
   align-items: center; justify-content: center;
-  z-index: 100;
+  /* Must beat Leaflet's controls (1000) and panes (400-700) */
+  z-index: 10000;
   padding: 16px;
   touch-action: pan-y pinch-zoom;
 }
