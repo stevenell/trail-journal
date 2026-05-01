@@ -112,11 +112,28 @@ const photos = (photosData as any[]).filter((p) => p.day != null);
       });
       photoCluster.addTo(map);
 
-      // fit bounds to route
+      // fit bounds to route (default view)
       try {
         map.fitBounds(routeLayer.getBounds(), { padding: [16, 16] });
       } catch (_) {
         map.setView([34.0, -116.7], 9);
+      }
+
+      // Deep-link: ?day=N zooms to that day's stop and opens its popup.
+      const params = new URLSearchParams(window.location.search);
+      const focusDay = parseInt(params.get("day") || "", 10);
+      if (Number.isFinite(focusDay)) {
+        const target = stopFeatures.find((f) => f.properties.day === focusDay);
+        if (target) {
+          const [lon, lat] = target.geometry.coordinates;
+          map.setView([lat, lon], 12, { animate: true });
+          stopGroup.eachLayer((layer) => {
+            const ll = layer.getLatLng();
+            if (Math.abs(ll.lat - lat) < 1e-6 && Math.abs(ll.lng - lon) < 1e-6) {
+              layer.openPopup();
+            }
+          });
+        }
       }
     });
   </script>

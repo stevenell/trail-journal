@@ -200,6 +200,37 @@ button { font: inherit; cursor: pointer; }
   font-weight: 400;
 }
 
+.day-map-link {
+  display: block;
+  margin: 20px 0 0;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  text-decoration: none;
+  color: inherit;
+}
+.day-map-link:hover .day-map__cta { background: rgba(0, 0, 0, 0.85); }
+.day-map {
+  height: 220px;
+  width: 100%;
+  background: #e8e0d2;
+}
+.day-map__cta {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  border-radius: 4px;
+  z-index: 1000;
+  pointer-events: none;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
 /* photo grids */
 .photo-grid {
   display: grid;
