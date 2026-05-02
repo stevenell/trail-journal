@@ -1,6 +1,8 @@
 ---
 import "../styles/global.css";
 import photosData from "../data/photos.json";
+import fs from "node:fs";
+import path from "node:path";
 
 interface Props {
   title?: string;
@@ -11,6 +13,21 @@ interface Props {
   image?: string;
   /** og:type — "website" for index/photos/trail, "article" for individual day posts. */
   ogType?: "website" | "article";
+}
+
+// Scan public/bg/ at build time for candidate background images.
+// `build_data.py` keeps this folder in sync with <PCT>\backgrounds\.
+// If multiple are present, the client picks one at random per page load
+// and the picker widget lets you cycle.
+const bgDir = path.resolve("public/bg");
+let bgCandidates: string[] = [];
+try {
+  bgCandidates = fs
+    .readdirSync(bgDir)
+    .filter((f) => /\.(jpe?g|png|webp)$/i.test(f))
+    .sort();
+} catch (_) {
+  bgCandidates = [];
 }
 
 // Default OG image: the first photo on file, sorted chronologically.
@@ -61,6 +78,27 @@ const canonicalUrl = new URL(Astro.url.pathname, siteOrigin).toString();
     <meta name="twitter:image" content={ogImage} />
 
     <link rel="preconnect" href="https://tile.openstreetmap.org" />
+
+    {bgCandidates.length > 0 && (
+      <script is:inline define:vars={{ bgCandidates }}>
+        // Pick a random background and apply it before paint. Persists the
+        // pick in sessionStorage so navigating between pages doesn't reshuffle —
+        // refresh or click "next bg" to cycle.
+        (function () {
+          if (!Array.isArray(bgCandidates) || bgCandidates.length === 0) return;
+          const KEY = "pct_bg_choice";
+          let chosen = sessionStorage.getItem(KEY);
+          if (!chosen || !bgCandidates.includes(chosen)) {
+            chosen = bgCandidates[Math.floor(Math.random() * bgCandidates.length)];
+            sessionStorage.setItem(KEY, chosen);
+          }
+          // Layer order matches global.css (#1 image, #2-11 stars, #12-13 gradients).
+          // Setting backgroundImage on body via inline style overrides the rule.
+          document.documentElement.style.setProperty("--bg-image", `url("/bg/${chosen}")`);
+          window.__pctBg = { all: bgCandidates, current: chosen };
+        })();
+      </script>
+    )}
   </head>
   <body>
     <div class={fullBleed ? "app app--full" : "app"}>
@@ -77,6 +115,51 @@ const canonicalUrl = new URL(Astro.url.pathname, siteOrigin).toString();
       <main>
         <slot />
       </main>
+
+      {bgCandidates.length > 1 && (
+        <div class="bg-picker" id="bg-picker" aria-label="Background picker" hidden>
+          <span class="bg-picker__name" id="bg-picker-name"></span>
+          <button type="button" class="bg-picker__btn" id="bg-picker-next" title="Try another background">
+            next bg <span aria-hidden="true">→</span>
+          </button>
+        </div>
+        <script is:inline define:vars={{ bgCandidates }}>
+          (function () {
+            // Only reveal the picker on localhost or when ?bg=pick is in the URL.
+            // (Random rotation still happens for everyone in the inline script
+            //  in <head>; this widget is just for choosing.)
+            const isLocal = /^(localhost|127\.0\.0\.1|::1)$/.test(location.hostname) ||
+                            location.hostname.endsWith(".local");
+            const isOptIn = new URLSearchParams(location.search).get("bg") === "pick";
+            if (!isLocal && !isOptIn) return;
+
+            const wrapper = document.getElementById("bg-picker");
+            if (wrapper) wrapper.hidden = false;
+
+            const KEY = "pct_bg_choice";
+            const nameEl = document.getElementById("bg-picker-name");
+            const btn = document.getElementById("bg-picker-next");
+            const cur = sessionStorage.getItem(KEY);
+            if (nameEl) nameEl.textContent = cur || "—";
+            if (btn) {
+              btn.addEventListener("click", () => {
+                const cur = sessionStorage.getItem(KEY);
+                const others = bgCandidates.filter((b) => b !== cur);
+                const next = (others.length > 0 ? others : bgCandidates)[
+                  Math.floor(Math.random() * (others.length > 0 ? others.length : bgCandidates.length))
+                ];
+                sessionStorage.setItem(KEY, next);
+                document.documentElement.style.setProperty(
+                  "--bg-image",
+                  `url("/bg/${next}")`
+                );
+                if (nameEl) nameEl.textContent = next;
+                window.__pctBg = { all: bgCandidates, current: next };
+              });
+            }
+          })();
+        </script>
+      )}
 
       <nav class="bottom-nav" aria-label="Main">
         <a href="/" class={`bottom-nav__item ${active === "home" ? "is-active" : ""}`}>

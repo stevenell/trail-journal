@@ -44,6 +44,7 @@ PCT_DATA = Path(
 SOURCE_KML = PCT_DATA / "pct_trip.kml"
 SOURCE_NOTES_DIR = PCT_DATA / "notes"  # all *.txt files merged in name order
 SOURCE_PHOTOS = PCT_DATA / "photos_geotagged"
+SOURCE_BACKGROUNDS = PCT_DATA / "backgrounds"  # optional bg images for the site
 
 # ---------------- OUTPUT (relative to project root) ----------------
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -51,6 +52,7 @@ GEOJSON_OUT = PROJECT_ROOT / "src" / "data" / "route.json"
 PHOTOS_JSON_OUT = PROJECT_ROOT / "src" / "data" / "photos.json"
 DAYS_DIR = PROJECT_ROOT / "src" / "content" / "days"
 PHOTOS_PUBLIC = PROJECT_ROOT / "public" / "photos"
+BACKGROUNDS_PUBLIC = PROJECT_ROOT / "public" / "bg"
 
 # ---------------- KNOBS ----------------
 DAY_ONE_DATE = date(2026, 4, 5)
@@ -544,7 +546,53 @@ def main() -> None:
     PHOTOS_JSON_OUT.write_text(json.dumps(photos, indent=2), encoding="utf-8")
     print(f"      {len(photos)} photos written\n")
 
+    sync_backgrounds()
+
     print("Done.")
+
+
+def sync_backgrounds() -> None:
+    """Copy any candidate background images from <PCT>/backgrounds/ into
+    public/bg/. Files that aren't in the source any more are pruned (except
+    README.md and the canonical "space.jpg" if no candidates are present).
+    """
+    if not SOURCE_BACKGROUNDS.exists():
+        return
+    BACKGROUNDS_PUBLIC.mkdir(parents=True, exist_ok=True)
+
+    exts = {".jpg", ".jpeg", ".png", ".webp"}
+    candidates = sorted(
+        p for p in SOURCE_BACKGROUNDS.iterdir()
+        if p.is_file() and p.suffix.lower() in exts
+    )
+
+    print(
+        f"[bg]   {len(candidates)} candidate(s) "
+        f"in {SOURCE_BACKGROUNDS.relative_to(PCT_DATA.parent)}/"
+    )
+    if not candidates:
+        return
+
+    # Copy candidates over (same name, replace if present).
+    keep_names = set()
+    for src in candidates:
+        dst = BACKGROUNDS_PUBLIC / src.name
+        keep_names.add(src.name)
+        if dst.exists() and dst.stat().st_mtime >= src.stat().st_mtime and dst.stat().st_size == src.stat().st_size:
+            continue
+        shutil.copy2(src, dst)
+        print(f"  [bg] copy {src.name} -> public/bg/")
+
+    # Prune images in public/bg/ that aren't candidates any more, but
+    # leave README.md and any non-image files alone.
+    for existing in BACKGROUNDS_PUBLIC.iterdir():
+        if not existing.is_file():
+            continue
+        if existing.suffix.lower() not in exts:
+            continue
+        if existing.name not in keep_names:
+            existing.unlink()
+            print(f"  [bg] prune {existing.name}")
 
 
 if __name__ == "__main__":
