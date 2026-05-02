@@ -32,7 +32,7 @@ To get back on trail we had to scramble up the steep 8 ft. Tall wall of the rive
 
 Eventually the trail forks and we ascend up up up a ridge and valley to get to another riverbed crossing.
 
-Late lunch stopped and took off we're shoes and socks and lasted everything in the sun. My feet are pruney.
+Late lunch stopped and took off our shoes and socks and layed everything in the sun. My feet are pruney.
 
 3 more miles to our campsite.
 

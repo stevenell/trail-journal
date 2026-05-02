@@ -16,7 +16,7 @@ Slept through my alarm - up and packed quickly.
 
 On trail a little after 6 AM - today we descend over 6,000+ ft.
 
-The valley unfolds below - you can see glimpses of the wind turbines and the freeway and Casio. along with the mountains and clouds below in the distance.
+The valley unfolds below - you can see glimpses of the wind turbines and the freeway and Casino. along with the mountains and clouds below in the distance.
 
 Beautiful water stop off trail at a flowing creek.
 

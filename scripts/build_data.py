@@ -173,6 +173,15 @@ TYPO_FIXES: list[tuple[str, str]] = [
     (r"\bput toilets\b",              "pit toilets"),
     (r"\bor butts off camping\b",     "our butts off camping"),
     (r"\bSnowy prayed San\b",         "Snow-capped San"),
+    (r"\bCasio\b",                    "Casino"),
+    (r"\blasted everything in the sun\b", "layed everything in the sun"),
+    (r"\bwe're shoes and socks\b",    "our shoes and socks"),
+    (r"\bDoes at our Airbnb\b",       "Got to our Airbnb"),
+    (r"\bbreak to takes and kill some time\b", "break to rest and kill some time"),
+    # Place name normalization — the lake/town is officially "Lake Morena"
+    # (with an 'a'), but Emily occasionally types "Moreno".
+    (r"\bLake Moreno\b",              "Lake Morena"),
+    (r"\bMoreno Village\b",           "Morena Village"),
 ]
 
 # For days where Emily wrote a street address instead of GPS coords.
@@ -372,6 +381,10 @@ def parse_notes_file(text: str) -> list[dict]:
         body = apply_typo_fixes(body)
         body = format_body_markdown(body)
         info["body"] = body
+        # Also run typo fixes on the parsed-out goal line — it's user-typed
+        # prose and should follow the same conventions as the body.
+        if info["goal"]:
+            info["goal"] = apply_typo_fixes(info["goal"])
         out.append(info)
     return out
 

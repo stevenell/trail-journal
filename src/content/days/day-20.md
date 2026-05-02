@@ -18,7 +18,7 @@ Snow-capped San Bernardino mountains.
 
 Overlook on the Mission Creek Wash & the San Jacinto mountains .
 
-Took a very long lunch break to takes and kill some time before meeting up with Steven & Dan in Big Bear.
+Took a very long lunch break to rest and kill some time before meeting up with Steven & Dan in Big Bear.
 
 A parade of hikers passed by while we hung out. Many new faces - most hikers we've seen in such a short time - we must be hitting a bubble near Big Bear.
 

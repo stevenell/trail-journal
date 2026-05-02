@@ -2,7 +2,7 @@
 day: 2
 date: "2026-04-06"
 title: "Day #2:  04/06/2026 - Monday"
-goal: "Hiking to malts and burgers at Lake Moreno"
+goal: "Hiking to malts and burgers at Lake Morena"
 miles_today: "18.18 miles"
 total_pct: "22.4"
 total_all: "23.12"
@@ -28,7 +28,7 @@ Sun has come out in full force - getting hot.
 Road walk and connect back to trail down into ravine before a large incline up up up to get over the mountain. Stopped half way up to drench shirts in water for a cool down and more up up up.
 
 Lake Morena visible in the distance.  
-More up followed by a nice steady down into Moreno Village.
+More up followed by a nice steady down into Morena Village.
 
 Trail magic at trailhead - hikers from the prior year came back to give back to the trail - cooler of cold beverages - I had a Watermelon High Noon. 🍉
 

@@ -14,7 +14,7 @@ lon: -116.41853
 
 Up at 5:30 AM - packed and on trail.  
 Sky still had color - pinks and purples.  
-Last glimpse of Lake Moreno as we head on.  
+Last glimpse of Lake Morena as we head on.  
 Views of mountains and big chunky boulders.
 
 First cow sighting - a whole herd right near our expected water source. Stopped for breakfast and checked maps - thankfully better water about 1/2 mile ahead.
