@@ -32,22 +32,34 @@ Write-Host "    data root : $pctRoot"
 Write-Host "    site root : $siteRoot"
 Write-Host ""
 
-# 1. Geotag any new photos in photos_incoming\
+# 1. Pull any new day entries from the Google Doc into the notes archive.
+#    (No-op if .gdoc-url isn't configured yet - see WORKFLOW.md.)
+Write-Host "[1/4] Pulling new notes from Google Doc..."
+Push-Location $siteRoot
+try {
+    python scripts\pull_notes_from_gdoc.py
+    if ($LASTEXITCODE -ne 0) { Write-Error "pull_notes step failed"; exit 1 }
+} finally {
+    Pop-Location
+}
+Write-Host ""
+
+# 2. Geotag any new photos in photos_incoming\
 $incoming = Get-ChildItem "$pctRoot\photos_incoming" -File -Filter "*.jp*g" -ErrorAction SilentlyContinue
 if ($incoming -and $incoming.Count -gt 0) {
-    Write-Host "[1/3] Geotagging $($incoming.Count) incoming photo(s)..."
+    Write-Host "[2/4] Geotagging $($incoming.Count) incoming photo(s)..."
     python $geotagScript
     if ($LASTEXITCODE -ne 0) { Write-Error "geotag step failed"; exit 1 }
     Write-Host ""
     Write-Host "    Note: incoming files are still in photos_incoming\."
     Write-Host "    Once you're happy with the result, you can delete them."
 } else {
-    Write-Host "[1/3] No new photos in photos_incoming\ - skipping geotag."
+    Write-Host "[2/4] No new photos in photos_incoming\ - skipping geotag."
 }
 Write-Host ""
 
-# 2. Build site data (notes -> markdown, KML+notes -> geojson, photos -> public/photos)
-Write-Host "[2/3] Building site data..."
+# 3. Build site data (notes -> markdown, KML+notes -> geojson, photos -> public/photos)
+Write-Host "[3/4] Building site data..."
 Push-Location $siteRoot
 try {
     python scripts\build_data.py
@@ -57,17 +69,17 @@ try {
 }
 Write-Host ""
 
-# 3. Commit and push (skipped if -NoPush, or if there is nothing to commit)
+# 4. Commit and push (skipped if -NoPush, or if there is nothing to commit)
 Push-Location $siteRoot
 try {
     if ($NoPush) {
-        Write-Host "[3/3] -NoPush set - skipping git commit/push."
+        Write-Host "[4/4] -NoPush set - skipping git commit/push."
         Write-Host ""
         Write-Host "Done. Refresh your browser, or run 'npm run dev' if it isn't running."
         return
     }
 
-    Write-Host "[3/3] Committing and pushing..."
+    Write-Host "[4/4] Committing and pushing..."
     git add . | Out-Null
     git diff --cached --quiet
     if ($LASTEXITCODE -eq 0) {

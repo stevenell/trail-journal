@@ -4,6 +4,7 @@ All canonical trip data lives in **`%USERPROFILE%\OneDrive - Soaren Management\D
 
 ```
 <PCT>\
+  .gdoc-url               (optional) one line: published-to-web URL of Emily's notes Google Doc
   notes\                  one or more notes-NN.txt files (any names work)
   photos_geotagged\       all geotagged photos — the build reads from here
   photos_incoming\        DROP NEW UNTAGGED PHOTOS HERE
@@ -11,7 +12,31 @@ All canonical trip data lives in **`%USERPROFILE%\OneDrive - Soaren Management\D
   pct_trip.kml            KML route + day stops (used for map lines)
 ```
 
-## When Emily sends a new batch
+## Google Doc → notes archive (the easiest way to keep notes in sync)
+
+One-time setup:
+
+1. Open Emily's notes doc in Google Docs.
+2. **File → Share → Publish to web**.
+3. In the dialog, switch the format dropdown to **"Plain text"** and click **Publish**.
+4. Copy the URL Google gives you. It looks like:
+   ```
+   https://docs.google.com/document/d/e/2PACX-.../pub?output=txt
+   ```
+5. Paste that single line into a new file at `<PCT>\.gdoc-url`.
+
+Going forward:
+
+- Edit the Doc whenever Emily sends new content. Just keep the existing format (`Day #N:` header, stats, body, `Camping here: GPS:[lat, lon]`).
+- The first step of `update.ps1` calls `scripts\pull_notes_from_gdoc.py`, which:
+  - Fetches the Doc's plain-text dump
+  - Parses every `Day #N` block
+  - Skips any day already in `<PCT>\notes\notes-*.txt`
+  - Appends only new days into a dated archive file: `notes-gdoc-YYYY-MM-DD.txt`
+- It's idempotent — re-running is a no-op until you add a new day to the Doc.
+- Once a day is in the archive locally, you're free to delete it from the Doc to keep things tidy. The archive is the source of truth.
+
+## When Emily sends a new batch (manual fallback)
 
 1. **Notes**: copy the new text file into `<PCT>\notes\` with any name (e.g. `notes-03.txt`). The build merges all `*.txt` files by day number — when two files have the same day, the longer body wins, and missing fields are filled in from the other.
 
