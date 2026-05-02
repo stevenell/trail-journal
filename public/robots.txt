@@ -1,0 +1,37 @@
+# Public trail journal — anyone is welcome to crawl, link-preview, or index this site.
+
+User-agent: *
+Allow: /
+
+# Explicit allows for known link-preview / social crawlers — some of these have
+# parsers that get confused by Cloudflare's auto-injected "Content-Signal:" line,
+# so we reassert that they're allowed here.
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Facebot
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: Slackbot
+Allow: /
+
+User-agent: Discordbot
+Allow: /
+
+User-agent: TelegramBot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+User-agent: Pinterest
+Allow: /
+
+User-agent: Applebot
+Allow: /
