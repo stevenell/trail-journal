@@ -1,12 +1,12 @@
 ---
 day: 18
 date: "2026-04-22"
-title: "Day #18:  04/22/2026 - Wednesday"
+title: "Day #18: 04/22/2026 - Wednesday"
 goal: "Hike to Mission Creek ~ 16+ miles"
 miles_today: "17.15"
 total_pct: "226.1 miles"
-total_all: "240.65  miles"
-miles_to_go: "873.9  // 1098.9"
+total_all: "240.65 miles"
+miles_to_go: "873.9 // 1098.9"
 stop_type: "Camp"
 lat: 34.0426
 lon: -116.65693

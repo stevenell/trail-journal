@@ -1,7 +1,7 @@
 ---
 day: 12
 date: "2026-04-16"
-title: "Day #12:  04/16/2026 - Thursday"
+title: "Day #12: 04/16/2026 - Thursday"
 goal: "15 miles up up up - major elevation today!"
 miles_today: "15.65 miles"
 total_pct: "170.9 miles"

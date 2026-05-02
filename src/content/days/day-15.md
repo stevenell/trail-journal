@@ -1,12 +1,12 @@
 ---
 day: 15
 date: "2026-04-19"
-title: "Day #15:  04/19/2026 - Sunday"
+title: "Day #15: 04/19/2026 - Sunday"
 goal: "Relax"
-miles_today: "ZERO  / walked 3.05 miles"
+miles_today: "ZERO / walked 3.05 miles"
 total_pct: "179.4 miles"
 total_all: "192.41 miles"
-miles_to_go: "920.6  // 1145.6"
+miles_to_go: "920.6 // 1145.6"
 stop_type: "Airbnb"
 lat: 33.760398
 lon: -116.695655

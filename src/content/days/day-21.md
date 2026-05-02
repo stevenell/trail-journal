@@ -1,12 +1,12 @@
 ---
 day: 21
 date: "2026-04-25"
-title: "Day #21:   04/25/2026 - Saturday"
+title: "Day #21: 04/25/2026 - Saturday"
 goal: "Relax & Eat"
 miles_today: "ZERO"
-total_pct: "252.1  miles"
+total_pct: "252.1 miles"
 total_all: "267.59 miles"
-miles_to_go: "847.9  // 1072.9"
+miles_to_go: "847.9 // 1072.9"
 stop_type: "Airbnb"
 lat: 34.2489
 lon: -116.84726

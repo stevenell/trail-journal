@@ -1,7 +1,7 @@
 ---
 day: 23
 date: "2026-04-27"
-title: "Day #23:   04/27/2026 - Monday"
+title: "Day #23: 04/27/2026 - Monday"
 goal: "~ 18 miles"
 miles_today: "19.14"
 total_pct: "271.1 miles"

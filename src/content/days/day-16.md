@@ -1,12 +1,12 @@
 ---
 day: 16
 date: "2026-04-20"
-title: "Day #16:  04/20/2026 - Monday"
+title: "Day #16: 04/20/2026 - Monday"
 goal: "Get back on trail!"
 miles_today: "14.53"
 total_pct: "190.4 miles"
 total_all: "203.89 miles"
-miles_to_go: "909.6  // 1134.6"
+miles_to_go: "909.6 // 1134.6"
 stop_type: "Camp"
 lat: 33.83958
 lon: -116.73661

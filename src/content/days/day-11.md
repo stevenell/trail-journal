@@ -1,7 +1,7 @@
 ---
 day: 11
 date: "2026-04-15"
-title: "Day #11:  04/15/2026 - Wednesday"
+title: "Day #11: 04/15/2026 - Wednesday"
 goal: "Paradise Valley Burgers & 16+ miles"
 miles_today: "18.12 miles"
 total_pct: "155.9 miles"

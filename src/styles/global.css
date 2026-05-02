@@ -29,9 +29,9 @@ body {
   background-color: var(--bg);
   /* --bg-image is set inline by BaseLayout when there are 1+ candidate
      backgrounds in public/bg/ (synced from <PCT>\backgrounds\ at build).
-     Falls back to /bg/space.jpg if the picker hasn't run yet. */
+     Falls back to /bg/bg5.png if the picker hasn't run yet. */
   background-image:
-    var(--bg-image, url("/bg/space.jpg")),
+    var(--bg-image, url("/bg/bg5.png")),
     /* tiny twinkles on a 320x320 tile */
     radial-gradient(1px 1px at 23px 41px,  rgba(255,255,255,0.85), transparent 60%),
     radial-gradient(1px 1px at 87px 12px,  rgba(255,255,255,0.55), transparent 60%),

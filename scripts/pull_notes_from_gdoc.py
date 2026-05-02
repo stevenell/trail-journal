@@ -31,7 +31,6 @@ from __future__ import annotations
 import re
 import sys
 import urllib.request
-from datetime import date
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -176,21 +175,6 @@ def parse_day_entries(text: str) -> dict[int, str]:
     return entries
 
 
-def existing_archive_days() -> set[int]:
-    """Days already captured anywhere in `notes/notes-*.txt`."""
-    days: set[int] = set()
-    if not NOTES_DIR.exists():
-        return days
-    for f in sorted(NOTES_DIR.glob("notes-*.txt")):
-        try:
-            text = f.read_text(encoding="utf-8")
-        except UnicodeDecodeError:
-            text = f.read_text(encoding="utf-8", errors="replace")
-        for m in DAY_RE.finditer(text):
-            days.add(int(m.group(1)))
-    return days
-
-
 def main() -> int:
     if not URL_FILE.exists():
         print("[gdoc] no .gdoc-url configured - skipping (set up later via WORKFLOW.md)")
@@ -203,7 +187,7 @@ def main() -> int:
         print(f"[gdoc] .gdoc-url doesn't look like a URL: {url[:60]!r} - skipping")
         return 0
 
-    print("[gdoc] checking Google Doc for new day entries...")
+    print("[gdoc] syncing Google Doc into notes archive...")
 
     try:
         text = fetch_doc_text(url)
@@ -216,33 +200,22 @@ def main() -> int:
         print("[gdoc] no 'Day #N' entries found in the doc.")
         return 0
 
-    have = existing_archive_days()
-    new_days = sorted(d for d in entries if d not in have)
+    # Always write a single snapshot file with EVERY day in the Doc.
+    # build_data.py merges all notes-*.txt by day and prefers the longer
+    # body, so older static notes-NN.txt files keep providing days that
+    # have fallen out of the Doc, and newer/longer body content from
+    # the Doc wins for days where Emily filled in the details later.
+    target = NOTES_DIR / "notes-gdoc-latest.txt"
+    NOTES_DIR.mkdir(parents=True, exist_ok=True)
 
-    print(f"  doc has {len(entries)} day entr(ies); archive already has {len(have)}.")
-    if not new_days:
-        print("[gdoc] nothing new to add.")
-        return 0
-
-    # Build the appended block.
     out_blocks: list[str] = []
-    for day in new_days:
+    for day in sorted(entries):
         out_blocks.append("_______________________________________________\n")
         out_blocks.append("\n")
         out_blocks.append(entries[day].rstrip() + "\n")
         out_blocks.append("\n")
-    appended = "".join(out_blocks)
-
-    # All-in-one file per pull date. If we pull twice in one day, append.
-    target = NOTES_DIR / f"notes-gdoc-{date.today().isoformat()}.txt"
-    if target.exists():
-        prev = target.read_text(encoding="utf-8")
-        target.write_text(prev.rstrip() + "\n\n" + appended, encoding="utf-8")
-        print(f"[gdoc] appended day(s) {new_days} to existing {target.name}")
-    else:
-        NOTES_DIR.mkdir(parents=True, exist_ok=True)
-        target.write_text(appended, encoding="utf-8")
-        print(f"[gdoc] wrote day(s) {new_days} to new {target.name}")
+    target.write_text("".join(out_blocks), encoding="utf-8")
+    print(f"[gdoc] wrote {len(entries)} day(s) to {target.name}: {sorted(entries)}")
 
     return 0
 

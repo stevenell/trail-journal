@@ -3,7 +3,7 @@ day: 7
 date: "2026-04-11"
 title: "Day #7: 04/11/2026 - Saturday"
 goal: "halfway to Warner Springs"
-miles_today: "16.68 miles & 1.66 miles  (total of 18.34 miles today)"
+miles_today: "16.68 miles & 1.66 miles (total of 18.34 miles today)"
 total_pct: "98"
 total_all: "99.41"
 miles_to_go: "1,002 miles // 1227"

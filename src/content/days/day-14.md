@@ -1,12 +1,12 @@
 ---
 day: 14
 date: "2026-04-18"
-title: "Day #14:  04/18/2026 - Saturday"
+title: "Day #14: 04/18/2026 - Saturday"
 goal: "Movie and food in Idyllwild"
 miles_today: "ZERO"
 total_pct: "179.4 miles"
 total_all: "189.36 miles"
-miles_to_go: "920.6  // 1145.6"
+miles_to_go: "920.6 // 1145.6"
 stop_type: "Airbnb"
 lat: 33.760398
 lon: -116.695655
