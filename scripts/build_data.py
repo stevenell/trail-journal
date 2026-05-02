@@ -50,6 +50,7 @@ SOURCE_BACKGROUNDS = PCT_DATA / "backgrounds"  # optional bg images for the site
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 GEOJSON_OUT = PROJECT_ROOT / "src" / "data" / "route.json"
 PHOTOS_JSON_OUT = PROJECT_ROOT / "src" / "data" / "photos.json"
+BACKGROUNDS_JSON_OUT = PROJECT_ROOT / "src" / "data" / "backgrounds.json"
 DAYS_DIR = PROJECT_ROOT / "src" / "content" / "days"
 PHOTOS_PUBLIC = PROJECT_ROOT / "public" / "photos"
 BACKGROUNDS_PUBLIC = PROJECT_ROOT / "public" / "bg"
@@ -436,9 +437,18 @@ def safe_name(stem: str) -> str:
 
 
 def build_photos(src_dir: Path, public_dir: Path) -> list[dict]:
-    if public_dir.exists():
-        shutil.rmtree(public_dir)
+    # Don't rmtree the whole folder — Astro's dev server can hold file
+    # locks on /public/photos/ assets and that triggers WinError 145.
+    # Instead, remove just the .jpg files we manage so the dir keeps its
+    # handle open while individual files are unlinked.
     public_dir.mkdir(parents=True, exist_ok=True)
+    if public_dir.exists():
+        for f in public_dir.iterdir():
+            if f.is_file() and f.suffix.lower() in {".jpg", ".jpeg"}:
+                try:
+                    f.unlink()
+                except PermissionError:
+                    pass  # dev server has it open; will be overwritten below
 
     photos = sorted(p for p in src_dir.rglob("*") if p.suffix.lower() in {".jpg", ".jpeg"})
     out: list[dict] = []
@@ -555,12 +565,27 @@ def sync_backgrounds() -> None:
     """Copy any candidate background images from <PCT>/backgrounds/ into
     public/bg/. Files that aren't in the source any more are pruned (except
     README.md and the canonical "space.jpg" if no candidates are present).
-    """
-    if not SOURCE_BACKGROUNDS.exists():
-        return
-    BACKGROUNDS_PUBLIC.mkdir(parents=True, exist_ok=True)
 
+    Also writes the list of candidate filenames to src/data/backgrounds.json
+    so BaseLayout.astro can import it without needing node:fs at build time
+    (which doesn't work on Cloudflare's prerender Worker).
+    """
+    BACKGROUNDS_PUBLIC.mkdir(parents=True, exist_ok=True)
+    BACKGROUNDS_JSON_OUT.parent.mkdir(parents=True, exist_ok=True)
     exts = {".jpg", ".jpeg", ".png", ".webp"}
+
+    if not SOURCE_BACKGROUNDS.exists():
+        # No source folder -> publish whatever's already in public/bg/.
+        present = sorted(
+            p.name for p in BACKGROUNDS_PUBLIC.iterdir()
+            if p.is_file() and p.suffix.lower() in exts
+        )
+        BACKGROUNDS_JSON_OUT.write_text(
+            json.dumps(present, indent=2), encoding="utf-8"
+        )
+        print(f"[bg]   no source dir, listed {len(present)} existing image(s)")
+        return
+
     candidates = sorted(
         p for p in SOURCE_BACKGROUNDS.iterdir()
         if p.is_file() and p.suffix.lower() in exts
@@ -570,8 +595,6 @@ def sync_backgrounds() -> None:
         f"[bg]   {len(candidates)} candidate(s) "
         f"in {SOURCE_BACKGROUNDS.relative_to(PCT_DATA.parent)}/"
     )
-    if not candidates:
-        return
 
     # Copy candidates over (same name, replace if present).
     keep_names = set()
@@ -592,7 +615,13 @@ def sync_backgrounds() -> None:
             continue
         if existing.name not in keep_names:
             existing.unlink()
-            print(f"  [bg] prune {existing.name}")
+
+    # Write the list to src/data/backgrounds.json (committed to git).
+    bg_list = sorted(keep_names)
+    BACKGROUNDS_JSON_OUT.write_text(
+        json.dumps(bg_list, indent=2), encoding="utf-8"
+    )
+    print(f"[bg]   wrote {len(bg_list)} entries -> {BACKGROUNDS_JSON_OUT.relative_to(PROJECT_ROOT)}")
 
 
 if __name__ == "__main__":

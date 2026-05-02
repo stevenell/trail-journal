@@ -1,8 +1,7 @@
 ---
 import "../styles/global.css";
 import photosData from "../data/photos.json";
-import fs from "node:fs";
-import path from "node:path";
+import bgListData from "../data/backgrounds.json";
 
 interface Props {
   title?: string;
@@ -15,20 +14,13 @@ interface Props {
   ogType?: "website" | "article";
 }
 
-// Scan public/bg/ at build time for candidate background images.
-// `build_data.py` keeps this folder in sync with <PCT>\backgrounds\.
-// If multiple are present, the client picks one at random per page load
-// and the picker widget lets you cycle.
-const bgDir = path.resolve("public/bg");
-let bgCandidates: string[] = [];
-try {
-  bgCandidates = fs
-    .readdirSync(bgDir)
-    .filter((f) => /\.(jpe?g|png|webp)$/i.test(f))
-    .sort();
-} catch (_) {
-  bgCandidates = [];
-}
+// Background candidates. `build_data.py` writes src/data/backgrounds.json
+// each time it syncs <PCT>\backgrounds\ -> public/bg/, so this list is
+// committed to git and works in any build environment (no node:fs needed,
+// which matters for Cloudflare's prerender Worker).
+const bgCandidates: string[] = (bgListData as string[]).filter((f) =>
+  /\.(jpe?g|png|webp)$/i.test(f)
+);
 
 // Default OG image: the first photo on file, sorted chronologically.
 // Stable across builds (doesn't shift when new photos arrive).

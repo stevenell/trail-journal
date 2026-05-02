@@ -1,0 +1,19 @@
+/**
+ * Cloudflare Worker config for the static `trail-journal` site.
+ *
+ * Telling wrangler explicitly that this is a static-assets-only project
+ * (no `main` worker script) prevents Cloudflare's deploy step from
+ * running `astro add cloudflare` and converting the project to SSR.
+ *
+ * Astro builds plain HTML into `./dist/` and Cloudflare serves it as-is.
+ * If we ever want SSR, add a `main` field pointing at a worker entry.
+ */
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "trail-journal",
+  "compatibility_date": "2026-04-30",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}
