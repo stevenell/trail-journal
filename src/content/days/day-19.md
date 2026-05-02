@@ -22,7 +22,7 @@ Start the day with a river crossing - no way to do it without getting your feet 
 
 We had trail for about a mile and then it is washed away. Stopped for breakfast before things get crazy!
 
-Metup with Kaleidoscope, Mrs. Pooh & Virginia and hiked and scrambled with them all day today.
+Met up with Kaleidoscope, Mrs. Pooh & Virginia and hiked and scrambled with them all day today.
 
 Some of the trail is marked with cairns, sometimes you can see footprints... Mostly you follow the river that runs throughout a massive bed of boulders and sand and downed logs. Every so often you need to cross the creek to get on the other side as it gets next to the riverbed walls.
 

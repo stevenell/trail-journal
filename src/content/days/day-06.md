@@ -17,7 +17,7 @@ Start with a road climb up up up
 
 Cruisey day afterwards - beautiful views of green mountains - can look behind and see where we came from last night.
 
-Trail follows the edge of mountains for a few miles. Some spots are a little sketchy - but safe of you go slow.
+Trail follows the edge of mountains for a few miles. Some spots are a little sketchy - but safe if you go slow.
 
 Found a nice shady spot for peanut butter snack break and shoes off.
 

@@ -18,7 +18,7 @@ Lazy day relaxing around the house until lunch.
 
 Went to The Bear Trap tasting room and had delicious burgers and beer.
 
-Went to the downtarea and walked around gift shops until our movie started. Saw Over your Dead Body - it wasn't very good - but the popcorn was!
+Went to the downtown area and walked around gift shops until our movie started. Saw Over your Dead Body - it wasn't very good - but the popcorn was!
 
 Hazy rainy crazy weather when we left the theater.
 

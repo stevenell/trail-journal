@@ -16,7 +16,7 @@ Up and hiking a little slow today - because it's going to be HOT and sunny.
 
 Walked along a road and by another dam. Explored an industrial site with big pipe pieces - very neat - made many guesses as to what they're used for... They also have great acoustics!
 
-More road walking and bridge crossing until we climb up to Silverwood Lake. The water again is a bit of a tease - we had planned to swim at lunch but it is very green and filler with algae.
+More road walking and bridge crossing until we climb up to Silverwood Lake. The water again is a bit of a tease - we had planned to swim at lunch but it is very green and filled with algae.
 
 We sat at a shaded picnic table for lunch with cricket and roo (sisters) and relaxed. Motivation to leave is low due to heat - but water is needed and we must move on.
 
@@ -26,7 +26,7 @@ At the next water source shirts are dunked and water filtered to drink. We conti
 
 Cross over and under major highway underpass. Trail magic at the intersection consisting of a plastic bag filled with tiny sauce packets (soy sauce, hot sauce, ketchup, etc).
 
-Slimb up a ridge and over to the other side. Great view of the mountains from yesterday and the lake we hiked along today.
+Climb up a ridge and over to the other side. Great view of the mountains from yesterday and the lake we hiked along today.
 
 BIG rattle snake on trail - scared the heck out of Paul he screamed and jumped fast off trail.
 

@@ -14,7 +14,7 @@ lon: -116.69367
 
 Slept through my alarm - up and packed quickly.
 
-On trail ba little after 6 AM - today we descend over 6,000+ ft.
+On trail a little after 6 AM - today we descend over 6,000+ ft.
 
 The valley unfolds below - you can see glimpses of the wind turbines and the freeway and Casio. along with the mountains and clouds below in the distance.
 
@@ -42,7 +42,7 @@ Made it off the road to find some trail magic - cooler filled with Gatorade bott
 
 Hiked away from the San Jacinto Mtns, under power lines, adjacent to wind turbines, across washed out dirt roads, in the sandy sandy wash next to the train tracks and freeway, in the wind and some sprinkles until we reached the I-10 underpass.
 
-Hiked through the creepy underpass and upp the road to the hiker hostel.
+Hiked through the creepy underpass and up the road to the hiker hostel.
 
 Upon arrival we were told to take off our shoes and wash our hands. We brought our bags in and were shown around. The home has three cats (two are kept in the garage) - as a result Devon took my bunk bedroom (she's allergic) and I got stuck with a squat spot in the garage with 5 guys (including Paul) and the cats! 🙃
 

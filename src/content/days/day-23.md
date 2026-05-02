@@ -16,13 +16,13 @@ Breakfast burritos 🌯 and coffee. Finish packing and ready to go - Uber was ri
 
 On trail by 8 AM!
 
-Beautiful pine forest and rolling trails cross crossing a stream all morning.
+Beautiful pine forest and rolling trails crisscrossing a stream all morning.
 
 Giant downed trees.
 
 After a little climb there are drastic changes to the vegetation - all scrub bush and wide open - can see for miles in every direction.
 
-Joshua Trees are popping up amidt other brush and plants. Trail continues to roll and some juniper trees can be seen.
+Joshua Trees are popping up amidst other brush and plants. Trail continues to roll and some juniper trees can be seen.
 
 Found shade for lunch and a break. Many New faces on trail today.
 

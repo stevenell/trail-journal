@@ -28,7 +28,7 @@ Also saw a chonky Horney Toad lizard - rusty mustard in color - so cute!
 
 After a break we head up onto another mountain to continue the roundabout edge walking until we reach the water cache.
 
-Thankfully some friendly German hikers hauled up a bunch of water from the off trail cache (~ 1/2 mile or so one way) saving is some effort. Filled up and had lunch with another hiker - Aaron from Ohio.
+Thankfully some friendly German hikers hauled up a bunch of water from the off trail cache (~ 1/2 mile or so one way) saving us some effort. Filled up and had lunch with another hiker - Aaron from Ohio.
 
 Also found another NEW blister on my other heel - I don't feel them forming so can't be proactive! 🤬 I feel like my feet are entirely blistered now - two big blisters for feet. ... it's difficult to keep them clean when my feet are so dirty by the end of the day 😥
 

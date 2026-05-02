@@ -142,10 +142,37 @@ KV_RE = re.compile(
 )
 
 # Conservative typo fixes — only obvious mechanical errors, never style/voice.
+# Conservative typo / autocorrect fixes applied to every day's body on
+# every build. Keep these long enough to be unambiguous in context — we
+# don't want a generic word-substitution to corrupt a real sentence.
+# Add new entries here whenever you spot a recurring goof — they apply
+# retroactively to all days on the next `update.ps1`.
 TYPO_FIXES: list[tuple[str, str]] = [
-    (r"\bTooka\b", "Took a"),
-    (r"\bto to trailhead\b", "to the trailhead"),
-    (r"\bHikered\b", "Hiked"),
+    # word-boundary single-token autocorrect goofs
+    (r"\bTooka\b",       "Took a"),
+    (r"\bHikered\b",     "Hiked"),
+    (r"\bMetup\b",       "Met up"),
+    (r"\bMad eit\b",     "Made it"),
+    (r"\bSlimb\b",       "Climb"),
+    (r"\bChated\b",      "Chatted"),
+    (r"\bamidt\b",       "amidst"),
+    # multi-word phrase fixes — the surrounding words make these unambiguous
+    (r"\bto to trailhead\b",          "to the trailhead"),
+    (r"\bcross crossing a stream\b",  "crisscrossing a stream"),
+    (r"\bbidding with new growth\b",  "budding with new growth"),
+    (r"\bfiller with algae\b",        "filled with algae"),
+    (r"\bsaving is some effort\b",    "saving us some effort"),
+    (r"\bManny New faces\b",          "Many new faces"),
+    (r"\bdowntarea\b",                "downtown area"),
+    (r"\bWhy back to the Airbnb\b",   "Headed back to the Airbnb"),
+    (r"\bpacka were handed up\b",     "packs were handed up"),
+    (r"\bupp the road\b",             "up the road"),
+    (r"\bba little after 6 AM\b",     "a little after 6 AM"),
+    (r"\bbut safe of you go slow\b",  "but safe if you go slow"),
+    (r"\bwhile we having hung out\b", "while we hung out"),
+    (r"\bput toilets\b",              "pit toilets"),
+    (r"\bor butts off camping\b",     "our butts off camping"),
+    (r"\bSnowy prayed San\b",         "Snow-capped San"),
 ]
 
 # For days where Emily wrote a street address instead of GPS coords.

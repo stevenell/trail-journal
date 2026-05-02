@@ -14,15 +14,15 @@ lon: -116.84726
 
 Flowing trail today - up and down and spectacular views.
 
-Snowy prayed San Bernardino mountains.
+Snow-capped San Bernardino mountains.
 
 Overlook on the Mission Creek Wash & the San Jacinto mountains .
 
 Took a very long lunch break to takes and kill some time before meeting up with Steven & Dan in Big Bear.
 
-A parade of hikers passed by while we having hung out. Manny New faces - most hikers we've seen in such a short time - we must be hitting a bubble near Big Bear.
+A parade of hikers passed by while we hung out. Many new faces - most hikers we've seen in such a short time - we must be hitting a bubble near Big Bear.
 
-Looking ahead at the weather forecast it is going to rain & snow - we opted for an Airbnb instead of freezing or butts off camping the next two nights with Steven & Dan. Everyone will be happier!
+Looking ahead at the weather forecast it is going to rain & snow - we opted for an Airbnb instead of freezing our butts off camping the next two nights with Steven & Dan. Everyone will be happier!
 
 **** Hit mile # 250 *****
 

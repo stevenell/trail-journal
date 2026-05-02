@@ -37,7 +37,7 @@ First hitchhike on the PCT - rode in the truck bed with our bags and with Paul &
 
 Hung out with sky at the campground. Made dinner - spicy pasta (made me sniffle and tear up a bit) - delicious!
 
-Feel very fancy having a table to cook/eat at and running water and bathrooms (even if they're just put toilets.
+Feel very fancy having a table to cook/eat at and running water and bathrooms (even if they're just pit toilets.
 
 Another blister on my right foot this time 🤬  
 Not sure what's going on with my feet but they aren't happy - hopefully all these blisters hurry up and turn into calluses real quick!

@@ -32,9 +32,9 @@ Trail weaves and winds in and out and down the mountains. Many downed trees and 
 
 Pushing to water at nearby Creek - feels like we should have arrived much earlier than we did. Beautiful sandy shore and clean clear flowing water. Filtered and snacked and continued on - few more miles to camping...
 
-More downed trees - under (tree crawl) and over (pony ride) many more - terrain is changing again. Big boulders and sandy soil with pink flowering manzanita bushes. Trees along the trail are all bidding with new growth and tiny New leaves.
+More downed trees - under (tree crawl) and over (pony ride) many more - terrain is changing again. Big boulders and sandy soil with pink flowering manzanita bushes. Trees along the trail are all budding with new growth and tiny New leaves.
 
-Mad eit to camp - sandy, large boulders and epic view. Ate dinner and watched sunset from a giant boulder. Chated with two other hikers (Maui & unknown) and watched the sunset. 😍
+Made it to camp - sandy, large boulders and epic view. Ate dinner and watched sunset from a giant boulder. Chatted with two other hikers (Maui & unknown) and watched the sunset. 😍
 
 Finished camp set up in the dark - worth it!
 
