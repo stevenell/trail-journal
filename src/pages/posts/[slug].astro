@@ -84,11 +84,14 @@ const ogImage = photos[0] ? `/photos/${photos[0].file}` : undefined;
   image={ogImage}
   ogType="article"
 >
-  <article class="section">
-    <p style="margin-bottom: 4px;">
-      <a href="/">← All days</a>
+  <section class="section">
+    <p style="margin: 0 0 12px;">
+      <a href="/" style="color: var(--ink-on-dark);">← All days</a>
     </p>
-    <h1 style="margin: 4px 0 4px;">Day {day.data.day}</h1>
+  </section>
+  <article class="section" style="padding-top: 0;">
+   <div class="card">
+    <h1 style="margin: 0 0 4px;">Day {day.data.day}</h1>
     <p style="margin: 0 0 16px; color: var(--ink-soft);">{day.data.date}</p>
 
     <div class="day-card__stats">
@@ -158,6 +161,7 @@ const ogImage = photos[0] ? `/photos/${photos[0].file}` : undefined;
       <span>{prev && <a href={`/posts/day-${String(prev.data.day).padStart(2, "0")}`}>← Day {prev.data.day}</a>}</span>
       <span>{next && <a href={`/posts/day-${String(next.data.day).padStart(2, "0")}`}>Day {next.data.day} →</a>}</span>
     </nav>
+   </div>
   </article>
 
   <Lightbox photos={photos} />

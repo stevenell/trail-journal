@@ -4,20 +4,64 @@
 html, body {
   margin: 0;
   padding: 0;
-  color: var(--ink);
+  /* Light text by default — readable on the dark space backdrop.
+     Light-surface elements below (card, header, hero-stat, etc.) reset
+     color back to var(--ink) so they stay legible on cream/white. */
+  color: var(--ink-on-dark);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Page background: warm cream gradient + faint topographic contour tile. */
+/*
+ * Page background: deep-space gradient + scattered stars.
+ *
+ * Layers (top -> bottom):
+ *   1. /bg/space.jpg                 — optional hero image (drop it into public/bg/ to enable)
+ *   2. CSS-only stars                — radial-gradient dots, always there as a fallback
+ *   3. linear gradient + base color  — the underlying deep-space wash
+ *
+ * If /bg/space.jpg isn't present the browser silently skips layer 1
+ * and you just see stars on the gradient.
+ */
 body {
   background-color: var(--bg);
   background-image:
-    linear-gradient(180deg, #fbf7f0 0%, #f3ecdf 100%),
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='560' height='560' viewBox='0 0 560 560'><g fill='none' stroke='%23a3835a' stroke-opacity='0.18' stroke-width='1' stroke-linejoin='round'><path d='M 95,95 C 130,72 175,75 205,98 C 230,135 195,165 150,168 C 100,170 70,128 95,95 Z'/><path d='M 65,98 C 110,48 215,42 250,100 C 275,158 220,200 145,202 C 70,205 30,150 65,98 Z'/><path d='M 35,100 C 85,30 235,22 285,98 C 320,170 250,238 145,240 C 35,242 -10,168 35,100 Z'/><path d='M 290,300 C 335,278 385,288 420,318 C 450,360 425,395 380,398 C 330,398 285,355 290,300 Z'/><path d='M 260,302 C 310,250 405,248 450,308 C 480,368 425,420 365,422 C 295,425 245,360 260,302 Z'/><path d='M 230,308 C 290,235 425,225 475,300 C 510,375 450,455 365,460 C 275,465 205,395 230,308 Z'/><path d='M 195,310 C 270,205 470,195 510,308 C 540,395 465,488 365,492 C 260,498 175,420 195,310 Z'/><path d='M 80,420 C 105,402 138,404 158,422 C 176,447 158,467 130,468 C 98,468 72,448 80,420 Z'/><path d='M 60,422 C 95,388 165,386 188,422 C 205,460 175,492 130,492 C 85,492 50,462 60,422 Z'/></g></svg>");
-  background-blend-mode: multiply;
+    url("/bg/space.jpg"),
+    /* tiny twinkles on a 320x320 tile */
+    radial-gradient(1px 1px at 23px 41px,  rgba(255,255,255,0.85), transparent 60%),
+    radial-gradient(1px 1px at 87px 12px,  rgba(255,255,255,0.55), transparent 60%),
+    radial-gradient(1px 1px at 142px 188px, rgba(255,255,255,0.7),  transparent 60%),
+    radial-gradient(1px 1px at 201px 73px,  rgba(255,255,255,0.45), transparent 60%),
+    radial-gradient(1px 1px at 256px 220px, rgba(255,255,255,0.6),  transparent 60%),
+    radial-gradient(1px 1px at 304px 38px,  rgba(255,255,255,0.8),  transparent 60%),
+    radial-gradient(1px 1px at 49px 247px,  rgba(255,255,255,0.5),  transparent 60%),
+    radial-gradient(1px 1px at 178px 290px, rgba(255,255,255,0.7),  transparent 60%),
+    radial-gradient(1.5px 1.5px at 110px 110px, rgba(200,220,255,0.9), transparent 60%),
+    radial-gradient(1.5px 1.5px at 270px 160px, rgba(255,235,200,0.85), transparent 60%),
+    /* faint nebula wash in the upper-right */
+    radial-gradient(ellipse 60% 40% at 80% 15%, rgba(99, 76, 158, 0.18), transparent 70%),
+    /* deep-space gradient */
+    linear-gradient(180deg, #050813 0%, #0b1024 45%, #06091a 100%);
+  background-size:
+    cover,
+    320px 320px, 320px 320px, 320px 320px, 320px 320px, 320px 320px,
+    320px 320px, 320px 320px, 320px 320px, 320px 320px, 320px 320px,
+    100% 100%,
+    100% 100%;
+  background-position:
+    center,
+    0 0, 0 0, 0 0, 0 0, 0 0,
+    0 0, 0 0, 0 0, 0 0, 0 0,
+    center,
+    center;
+  background-repeat:
+    no-repeat,
+    repeat, repeat, repeat, repeat, repeat,
+    repeat, repeat, repeat, repeat, repeat,
+    no-repeat,
+    no-repeat;
   background-attachment: fixed;
   min-height: 100dvh;
 }
@@ -27,18 +71,24 @@ a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 button { font: inherit; cursor: pointer; }
 
-/* ===== palette (warm earthy / desert) ===== */
+/* ===== palette (full dark mode on a deep-space backdrop) =====
+ * Cards and chrome are deep slate with light cream text. Photos and the
+ * trail map become the only "warm" elements in frame, which is the point.
+ */
 :root {
-  --bg:        #fbf7f0;        /* cream */
-  --surface:   #ffffff;
-  --surface-2: #f3ece1;
-  --ink:       #2a2521;        /* near-black brown */
-  --ink-soft:  #6b625a;
-  --accent:    #b85935;        /* terracotta */
-  --accent-2:  #5b6e4d;        /* sage */
-  --line:      #e6dfd2;
-  --shadow:    0 1px 2px rgba(40,30,20,.05), 0 4px 12px rgba(40,30,20,.06);
-  --radius:    14px;
+  --bg:               #06091a;     /* deep space (fallback before bg image loads) */
+  --surface:          rgba(22, 26, 46, 0.92);   /* slate cards w/ slight translucency so stars bleed through */
+  --surface-2:        #1f2440;                  /* slightly elevated slate (photo placeholders, hover) */
+  --ink:              #e8e2d4;     /* warm cream — primary text on cards */
+  --ink-soft:         #9aa0b4;     /* cool gray — secondary text */
+  /* legacy aliases — match --ink / --ink-soft now (used by hero/post-map etc.) */
+  --ink-on-dark:      #f0ece5;
+  --ink-on-dark-soft: rgba(240, 236, 229, 0.7);
+  --accent:           #e08560;     /* brighter terracotta — readable on dark slate */
+  --accent-2:         #8eaa7d;     /* brighter sage */
+  --line:             rgba(255, 255, 255, 0.10);
+  --shadow:           0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.55);
+  --radius:           14px;
 }
 
 /* ===== layout shell ===== */
@@ -59,9 +109,10 @@ button { font: inherit; cursor: pointer; }
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(251, 247, 240, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(22, 26, 46, 0.78);
+  color: var(--ink);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
   padding: 10px 16px;
 }
@@ -91,7 +142,7 @@ button { font: inherit; cursor: pointer; }
   position: fixed;
   left: 0; right: 0; bottom: 0;
   z-index: 60;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(22, 26, 46, 0.85);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-top: 1px solid var(--line);
@@ -124,6 +175,7 @@ button { font: inherit; cursor: pointer; }
 }
 .card {
   background: var(--surface);
+  color: var(--ink);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 16px;
@@ -179,8 +231,8 @@ button { font: inherit; cursor: pointer; }
   margin: 20px 0 0;
   padding: 10px 12px;
   font-size: 0.88rem;
-  color: var(--ink-soft);
-  background: rgba(255, 255, 255, 0.45);
+  color: var(--ink);
+  background: rgba(31, 36, 64, 0.7);
   border: 1px solid var(--line);
   border-radius: 8px;
   font-style: italic;
@@ -214,7 +266,7 @@ button { font: inherit; cursor: pointer; }
 .day-map {
   height: 220px;
   width: 100%;
-  background: #e8e0d2;
+  background: var(--surface-2);
 }
 .day-map__cta {
   position: absolute;
@@ -314,15 +366,18 @@ button { font: inherit; cursor: pointer; }
 .hero {
   padding: 24px 16px;
   text-align: center;
+  color: var(--ink-on-dark);
 }
 .hero h1 {
   margin: 0 0 6px;
   font-size: 1.7rem;
   letter-spacing: -0.01em;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.6);
 }
 .hero__sub {
-  color: var(--ink-soft);
+  color: var(--ink-on-dark-soft);
   margin: 0 0 16px;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
 }
 .hero-stats {
   display: grid;
@@ -333,6 +388,7 @@ button { font: inherit; cursor: pointer; }
 }
 .hero-stat {
   background: var(--surface);
+  color: var(--ink);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 12px 8px;
@@ -350,12 +406,43 @@ button { font: inherit; cursor: pointer; }
 }
 
 /* ===== leaflet popup overrides ===== */
+.leaflet-popup-content-wrapper {
+  background: rgba(22, 26, 46, 0.96);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  /* allow the wrapper to honor the larger maxWidth set in JS */
+  min-width: 344px;
+}
+.leaflet-popup-tip {
+  background: rgba(22, 26, 46, 0.96);
+  border: 1px solid var(--line);
+  border-top: 0;
+  border-left: 0;
+}
 .leaflet-popup-content {
-  margin: 8px 12px;
+  margin: 10px 14px;
   font-size: 0.9rem;
+  color: var(--ink);
+  width: auto !important;        /* let the popup grow with content */
+  min-width: 320px;
+}
+.leaflet-popup-content a {
+  color: var(--accent);
+}
+.leaflet-popup-close-button {
+  color: var(--ink-soft) !important;
+}
+.leaflet-popup-close-button:hover {
+  color: var(--ink) !important;
 }
 .leaflet-popup-content img {
   border-radius: 6px;
+  /* defeat the global `img { max-width: 100% }` so popup images can render
+     at their declared inline width (320px for solo, 120px in a strip) */
+  max-width: none !important;
+  height: auto;
+  display: block;
 }
 
 /* prevent horizontal scroll from emoji width on small screens */

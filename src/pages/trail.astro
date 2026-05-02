@@ -101,13 +101,59 @@ const photos = (photosData as any[]).filter((p) => p.day != null);
         },
       });
 
+      // Group photos by (rounded lat, rounded lon) so that "burst" photos
+      // taken steps apart become a single marker with a thumbnail strip
+      // popup, rather than spiderfying out into a circle of pins.
+      // 4 decimals ≈ 11 m; tweak if photos at the same spot are still
+      // ending up as separate markers.
+      const photoGroups = new Map();
       photos.forEach((p) => {
-        const m = L.marker([p.lat, p.lon]);
-        const slug = `day-${String(p.day).padStart(2, "0")}`;
-        m.bindPopup(
-          `<a href="/posts/${slug}"><img src="/photos/${p.thumb}" width="160" alt=""></a>` +
-          `<br><a href="/posts/${slug}">Day ${p.day}</a>`
-        );
+        const key = `${p.lat.toFixed(4)},${p.lon.toFixed(4)}`;
+        if (!photoGroups.has(key)) photoGroups.set(key, []);
+        photoGroups.get(key).push(p);
+      });
+
+      const MAX_THUMBS_IN_POPUP = 12;
+
+      photoGroups.forEach((group) => {
+        const first = group[0];
+        const m = L.marker([first.lat, first.lon]);
+
+        if (group.length === 1) {
+          const slug = `day-${String(first.day).padStart(2, "0")}`;
+          m.bindPopup(
+            `<a href="/posts/${slug}"><img src="/photos/${first.thumb}" width="320" height="320" style="width:320px;height:auto;display:block;border-radius:6px" alt=""></a>` +
+            `<br><a href="/posts/${slug}">Day ${first.day}</a>`,
+            { maxWidth: 360, minWidth: 320 }
+          );
+        } else {
+          const visible = group.slice(0, MAX_THUMBS_IN_POPUP);
+          const overflow = group.length - visible.length;
+          const slug = `day-${String(first.day).padStart(2, "0")}`;
+
+          const strip = visible.map((p) => {
+            const pSlug = `day-${String(p.day).padStart(2, "0")}`;
+            return `<a href="/posts/${pSlug}"><img src="/photos/${p.thumb}" width="120" height="120" style="width:120px;height:120px;object-fit:cover;display:block;border-radius:4px" alt=""></a>`;
+          }).join("");
+
+          const overflowNote = overflow > 0
+            ? `<div style="margin-top:6px;font-size:0.85rem;"><a href="/posts/${slug}">+${overflow} more →</a></div>`
+            : "";
+
+          // Day labels — usually a single day, but multi-day groups are possible.
+          const days = [...new Set(group.map((p) => p.day))];
+          const dayLabel = days.length === 1
+            ? `Day ${days[0]}`
+            : `Days ${Math.min(...days)}–${Math.max(...days)}`;
+
+          m.bindPopup(
+            `<div style="display:flex;flex-wrap:wrap;gap:4px;max-width:496px">${strip}</div>` +
+            overflowNote +
+            `<div style="margin-top:6px;font-size:0.85rem;"><a href="/posts/${slug}">${dayLabel} · ${group.length} photos →</a></div>`,
+            { maxWidth: 520, minWidth: 320 }
+          );
+        }
+
         photoCluster.addLayer(m);
       });
       photoCluster.addTo(map);

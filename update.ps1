@@ -1,14 +1,14 @@
-# Trail-journal site — one-shot update script
+# Trail-journal site - one-shot update script
 #
 # Drops new content from `Desktop\pct\photos_incoming\` and `Desktop\pct\notes\`
-# into the site, then commits and pushes — Cloudflare auto-deploys on push.
+# into the site, then commits and pushes - Cloudflare auto-deploys on push.
 #
 # Usage:
 #     .\update.ps1                     # full flow (geotag, build, commit, push)
-#     .\update.ps1 -NoPush             # build only — no git commit/push
+#     .\update.ps1 -NoPush             # build only - no git commit/push
 #     .\update.ps1 -Message "day 27"   # custom commit message
 #
-# Re-runnable any time — already-tagged photos are preserved, notes merges
+# Re-runnable any time - already-tagged photos are preserved, notes merges
 # are idempotent, and an empty diff just prints "nothing to commit" and exits.
 
 [CmdletBinding()]
@@ -42,7 +42,7 @@ if ($incoming -and $incoming.Count -gt 0) {
     Write-Host "    Note: incoming files are still in photos_incoming\."
     Write-Host "    Once you're happy with the result, you can delete them."
 } else {
-    Write-Host "[1/3] No new photos in photos_incoming\ — skipping geotag."
+    Write-Host "[1/3] No new photos in photos_incoming\ - skipping geotag."
 }
 Write-Host ""
 
@@ -57,11 +57,11 @@ try {
 }
 Write-Host ""
 
-# 3. Commit and push (skipped if -NoPush, or if there's nothing to commit)
+# 3. Commit and push (skipped if -NoPush, or if there is nothing to commit)
 Push-Location $siteRoot
 try {
     if ($NoPush) {
-        Write-Host "[3/3] -NoPush set — skipping git commit/push."
+        Write-Host "[3/3] -NoPush set - skipping git commit/push."
         Write-Host ""
         Write-Host "Done. Refresh your browser, or run 'npm run dev' if it isn't running."
         return
@@ -71,7 +71,7 @@ try {
     git add . | Out-Null
     git diff --cached --quiet
     if ($LASTEXITCODE -eq 0) {
-        Write-Host "    Nothing changed since last push — skipping commit."
+        Write-Host "    Nothing changed since last push - skipping commit."
         Write-Host ""
         Write-Host "Done."
         return
@@ -91,4 +91,4 @@ try {
 
 Write-Host ""
 Write-Host "Done. Cloudflare will rebuild within a few seconds."
-Write-Host "Live deploys: https://dash.cloudflare.com  (Workers & Pages > trail-journal)"
+Write-Host 'Live deploys: https://dash.cloudflare.com  (Workers and Pages > trail-journal)'

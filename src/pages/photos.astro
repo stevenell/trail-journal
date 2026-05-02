@@ -26,16 +26,16 @@ const flat = sortedGroups.flatMap(([, list]) => list);
 >
   <section class="section">
     <h2 style="margin-top: 0;">All photos</h2>
-    <p style="color: var(--ink-soft); margin-top: -8px;">{flat.length} photos · tap any to view</p>
+    <p style="color: var(--ink-on-dark-soft); margin-top: -8px;">{flat.length} photos · tap any to view</p>
 
     <div data-lightbox-grid>
       {sortedGroups.map(([day, list]) => (
         <div style="margin-bottom: 24px;">
-          <h3 style="margin: 0 0 8px; font-size: 0.95rem; color: var(--ink-soft);">
+          <h3 style="margin: 0 0 8px; font-size: 0.95rem; color: var(--ink-on-dark-soft);">
             <a href={`/posts/day-${String(day).padStart(2, "0")}`} style="color: inherit;">
               Day {day}
             </a>
-            <span style="color: var(--line); margin: 0 6px;">·</span>
+            <span style="color: rgba(255,255,255,0.25); margin: 0 6px;">·</span>
             <span>{list[0]?.taken_at?.slice(0, 10) ?? ""}</span>
           </h3>
           <div class="photo-grid">
