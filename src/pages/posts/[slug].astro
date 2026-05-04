@@ -74,7 +74,19 @@ const ogDescription = (() => {
   return [stats, excerpt].filter(Boolean).join(" — ") || "Day on the PCT.";
 })();
 
-const ogImage = photos[0] ? `/photos/${photos[0].file}` : undefined;
+// Pick a deterministic-but-varied photo for the day's OG image instead of
+// always the first chronological one. Using `day.data.day` as the seed
+// keeps it stable across rebuilds (so Facebook's cached preview doesn't
+// flip every time we push) but means each day's link gets a different
+// photo, with a bias toward "interesting" mid-day shots.
+function pickDayOgPhoto(dayPhotos: any[], dayNum: number): any | undefined {
+  if (dayPhotos.length === 0) return undefined;
+  // simple deterministic hash on day number
+  const idx = ((dayNum * 2654435761) >>> 0) % dayPhotos.length;
+  return dayPhotos[idx];
+}
+const ogPhoto = pickDayOgPhoto(photos, day.data.day);
+const ogImage = ogPhoto ? `/photos/${ogPhoto.file}` : undefined;
 ---
 
 <BaseLayout

@@ -4,49 +4,46 @@ All canonical trip data lives in **`%USERPROFILE%\OneDrive - Soaren Management\D
 
 ```
 <PCT>\
-  .gdoc-url               (optional) one line: published-to-web URL of Emily's notes Google Doc
-  notes\                  one or more notes-NN.txt files (any names work)
-  photos_geotagged\       all geotagged photos — the build reads from here
-  photos_incoming\        DROP NEW UNTAGGED PHOTOS HERE
-  gpx\                    Garmin GPX files (used by geotag fallback)
-  pct_trip.kml            KML route + day stops (used for map lines)
+  .gdoc-url        (optional) one line: published-to-web URL of Emily's notes Google Doc
+  notes\           one or more notes-NN.txt files (any names work)
+  photos\          ALL geotagged photos — the build reads from here
+  best_photos\     small curated subset; one of these is used as the homepage OG image
+  backgrounds\     optional background images for the site
+  gpx\             Garmin GPX files (kept for reference; no longer used by the build)
+  pct_trip.kml     KML route + day stops (used for map lines)
 ```
+
+Photos arrive **pre-geotagged from the phone** now (location services baked into EXIF), so there is no separate geotag step. Just drop new photos into `<PCT>\photos\` and run the update.
 
 ## Google Doc → notes archive (the easiest way to keep notes in sync)
 
 One-time setup:
 
 1. Open Emily's notes doc in Google Docs.
-2. **File → Share → Publish to web**.
-3. In the dialog, switch the format dropdown to **"Plain text"** and click **Publish**.
-4. Copy the URL Google gives you. It looks like:
+2. **File → Share → Publish to web** → click **Publish**.
+3. Copy the URL Google gives you. It looks like:
    ```
-   https://docs.google.com/document/d/e/2PACX-.../pub?output=txt
+   https://docs.google.com/document/d/e/2PACX-.../pub
    ```
-5. Paste that single line into a new file at `<PCT>\.gdoc-url`.
+4. Paste that single line into a new file at `<PCT>\.gdoc-url`.
 
 Going forward:
 
-- Edit the Doc whenever Emily sends new content. Just keep the existing format (`Day #N:` header, stats, body, `Camping here: GPS:[lat, lon]`).
-- The first step of `update.ps1` calls `scripts\pull_notes_from_gdoc.py`, which:
-  - Fetches the Doc's plain-text dump
-  - Parses every `Day #N` block
-  - Skips any day already in `<PCT>\notes\notes-*.txt`
-  - Appends only new days into a dated archive file: `notes-gdoc-YYYY-MM-DD.txt`
-- It's idempotent — re-running is a no-op until you add a new day to the Doc.
-- Once a day is in the archive locally, you're free to delete it from the Doc to keep things tidy. The archive is the source of truth.
+- Edit the Doc whenever Emily sends new content. Keep the existing format (`Day #N:` header, stats, body, `Camping here: GPS:[lat, lon]`).
+- The first step of `update.ps1` calls `scripts\pull_notes_from_gdoc.py`, which fetches the Doc and writes a snapshot to `<PCT>\notes\notes-gdoc-latest.txt` containing every day in the Doc.
+- The build merges all `notes\*.txt` by day number, preferring the longest body — so older static `notes-NN.txt` files keep providing days that have rolled out of the Doc, and updated body content from the Doc wins for days where Emily later filled in details.
 
-## When Emily sends a new batch (manual fallback)
+## When Emily sends a new batch
 
-1. **Notes**: copy the new text file into `<PCT>\notes\` with any name (e.g. `notes-03.txt`). The build merges all `*.txt` files by day number — when two files have the same day, the longer body wins, and missing fields are filled in from the other.
+1. **Notes**: usually you don't need to do anything — they're in the Doc. If she sent a separate text file, drop it into `<PCT>\notes\` with any name (e.g. `notes-03.txt`).
 
-2. **Photos**:
-   - Photos that **already have GPS** in their EXIF (e.g. from a phone with working GPS) → drop straight into `<PCT>\photos_geotagged\`. They go to the site as-is.
-   - Photos **without GPS** (older Garmin-tagged batch, broken-GPS phone batch) → drop into `<PCT>\photos_incoming\`. The geotag step handles them.
+2. **Photos**: drop them straight into `<PCT>\photos\`. They already have GPS from the phone. If a particular photo doesn't appear on the map, its EXIF doesn't have GPS — easiest fix is to retag it on the phone.
 
-3. **GPX**: any new `.gpx` files from Emily's Garmin go into `<PCT>\gpx\` (used to tag photos by timestamp).
+3. **Best photos** (optional): pick 3–6 of your favorite shots and copy them into `<PCT>\best_photos\` using the **same filename** as in `photos\`. The first one (alphabetically) becomes the homepage OG image / link preview. To rotate to a different photo, rename it so it sorts first, or just put exactly one photo in the folder.
 
-4. **Run** `update.ps1` from the site root:
+4. **GPX**: only relevant if you ever need to retroactively geotag a non-phone photo via `Desktop\geotag_photos_from_gpx.py`. Not part of the normal flow.
+
+5. **Run** `update.ps1` from the site root:
 
    ```powershell
    cd c:\Users\steven.ellingson\projects\pct-site
@@ -54,26 +51,30 @@ Going forward:
    ```
 
    This:
-   - Geotags everything in `photos_incoming\` (skipping any that already have GPS), writing tagged copies into `photos_geotagged\`.
+   - Pulls the latest Google Doc content into `notes\notes-gdoc-latest.txt`.
    - Re-runs `scripts\build_data.py`, which:
-     - parses every `notes\*.txt` file and merges into `src\content\days\day-NN.md`
+     - parses every `notes\*.txt` and merges into `src\content\days\day-NN.md`
      - rebuilds `src\data\route.json` (KML route lines + day-stop pins, augmented with any new days from notes that aren't yet in the KML)
-     - rebuilds `src\data\photos.json` and re-resizes everything in `public\photos\`
+     - rebuilds `src\data\photos.json` (every photo from `<PCT>\photos\`, with `best: true` flagged for any whose filename also appears in `<PCT>\best_photos\`) and re-resizes into `public\photos\`
+     - syncs `<PCT>\backgrounds\` to `public\bg\`
+   - Commits and pushes to GitHub. Cloudflare auto-deploys.
 
-5. **Refresh the browser**. If the dev server isn't running:
+6. **Refresh the browser**. If the dev server isn't running:
 
    ```powershell
    npm run dev
    ```
 
-## Notes on the geotag step
+## Curated link-preview photo (homepage OG)
 
-`Desktop\geotag_photos_from_gpx.py` is the tagger. Defaults are wired to read from `<PCT>\photos_incoming\` and write to `<PCT>\photos_geotagged\`. It will:
+When you share `https://dustandstars.space/` on Facebook / iMessage / Slack, the link preview uses the first photo (alphabetically by filename) in `<PCT>\best_photos\`. To swap it:
 
-- **Skip** any photo that already has EXIF GPS (so re-running is safe — never overwrites real coords).
-- **Match** photos by EXIF timestamp against all GPX points in `<PCT>\gpx\` (within 15 min).
-- **Fall back** to the day's camp/lodging coord — first looking in `pct_trip.kml`, then in `<PCT>\notes\*.txt`. Notes wins on conflicts, so any new days that aren't in the KML yet still get a fallback.
+- **Replace**: drop a different photo into `<PCT>\best_photos\` (and remove the previous one).
+- **Force a specific one**: leave only one file in `<PCT>\best_photos\`.
+- **Rotate**: keep several files in `<PCT>\best_photos\`. The build picks the first one alphabetically — Facebook caches the OG image for ~30 days, so you should expect a noticeable preview change every time you swap the lead photo, not on every push.
 
-## After re-running
+For per-day links (e.g. `dustandstars.space/posts/day-25/`), the OG image is picked deterministically from that day's photos using the day number as a seed — so each day's link gets a different photo, but the same photo every time you visit.
 
-The originals from Emily's drops are still in `photos_incoming\`. They're harmless — re-running the update is a no-op once the geotagged copies are written. Clean them out manually whenever you want; nothing depends on them sticking around.
+## Manual geotag (only needed for old photos)
+
+`Desktop\geotag_photos_from_gpx.py` is the legacy tagger. It still works but isn't run by `update.ps1` anymore. Use it only if you ever need to retroactively tag a photo that doesn't have phone GPS. Defaults read from `photos_incoming\` (which we no longer maintain) and write to `photos\`. Adjust paths via CLI flags if needed.

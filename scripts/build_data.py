@@ -43,7 +43,14 @@ PCT_DATA = Path(
 )
 SOURCE_KML = PCT_DATA / "pct_trip.kml"
 SOURCE_NOTES_DIR = PCT_DATA / "notes"  # all *.txt files merged in name order
-SOURCE_PHOTOS = PCT_DATA / "photos_geotagged"
+SOURCE_PHOTOS = PCT_DATA / "photos"  # canonical single folder; photos arrive
+                                     # pre-geotagged from the phone, no geotag
+                                     # step needed in update.ps1 anymore.
+SOURCE_BEST_PHOTOS = PCT_DATA / "best_photos"  # curated subset for OG image
+                                               # on the homepage. Filenames
+                                               # here are matched against
+                                               # SOURCE_PHOTOS (or copied
+                                               # through if standalone).
 SOURCE_BACKGROUNDS = PCT_DATA / "backgrounds"  # optional bg images for the site
 
 # ---------------- OUTPUT (relative to project root) ----------------
@@ -476,7 +483,23 @@ def safe_name(stem: str) -> str:
     return re.sub(r"[^A-Za-z0-9._-]", "_", stem) + ".jpg"
 
 
-def build_photos(src_dir: Path, public_dir: Path) -> list[dict]:
+def load_best_photo_names(best_dir: Path) -> set[str]:
+    """Return the set of source filenames in <PCT>/best_photos/.
+
+    Each name here will get `best: true` in photos.json so the homepage's
+    OG image (and any other "feature photo" callers) can pick from this
+    curated subset instead of falling back to whichever photo happens to
+    be chronologically first.
+    """
+    if not best_dir.exists():
+        return set()
+    return {
+        p.name for p in best_dir.iterdir()
+        if p.is_file() and p.suffix.lower() in {".jpg", ".jpeg"}
+    }
+
+
+def build_photos(src_dir: Path, public_dir: Path, best_dir: Path | None = None) -> list[dict]:
     # Don't rmtree the whole folder — Astro's dev server can hold file
     # locks on /public/photos/ assets and that triggers WinError 145.
     # Instead, remove just the .jpg files we manage so the dir keeps its
@@ -489,6 +512,10 @@ def build_photos(src_dir: Path, public_dir: Path) -> list[dict]:
                     f.unlink()
                 except PermissionError:
                     pass  # dev server has it open; will be overwritten below
+
+    best_names = load_best_photo_names(best_dir) if best_dir else set()
+    if best_names:
+        print(f"    {len(best_names)} curated best photo(s)")
 
     photos = sorted(p for p in src_dir.rglob("*") if p.suffix.lower() in {".jpg", ".jpeg"})
     out: list[dict] = []
@@ -520,7 +547,7 @@ def build_photos(src_dir: Path, public_dir: Path) -> list[dict]:
         resize_to_jpeg(src, large_path, LARGE_MAX_PX, LARGE_QUALITY)
         resize_to_jpeg(src, thumb_path, THUMB_PX, THUMB_QUALITY, square=True)
 
-        out.append({
+        entry = {
             "file": outname,
             "thumb": f"thumb_{outname}",
             "lat": round(lat, 6),
@@ -528,7 +555,21 @@ def build_photos(src_dir: Path, public_dir: Path) -> list[dict]:
             "taken_at": taken_at,
             "day": day,
             "width": LARGE_MAX_PX,
-        })
+        }
+        if src.name in best_names:
+            entry["best"] = True
+        out.append(entry)
+
+    if best_names:
+        # Warn about any best_photos filename that didn't match a real photo.
+        matched = {p.get("file") for p in out if p.get("best")}
+        # The "file" written above is `safe_name(src.stem)`, but `best_names`
+        # are raw source filenames. Recover by checking the source basenames.
+        matched_src = {src.name for src in photos if src.name in best_names}
+        missing = best_names - matched_src
+        for name in sorted(missing):
+            print(f"    [warn] best_photos/{name} has no matching photo in {src_dir.name}/")
+
     return out
 
 
@@ -591,7 +632,7 @@ def main() -> None:
     print(f"      {n_lines} route segments, {n_pts} day stops total\n")
 
     print(f"[3/3] photos -> {PHOTOS_PUBLIC.relative_to(PROJECT_ROOT)}/")
-    photos = build_photos(SOURCE_PHOTOS, PHOTOS_PUBLIC)
+    photos = build_photos(SOURCE_PHOTOS, PHOTOS_PUBLIC, SOURCE_BEST_PHOTOS)
     PHOTOS_JSON_OUT.parent.mkdir(parents=True, exist_ok=True)
     PHOTOS_JSON_OUT.write_text(json.dumps(photos, indent=2), encoding="utf-8")
     print(f"      {len(photos)} photos written\n")

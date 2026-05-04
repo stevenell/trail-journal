@@ -22,11 +22,20 @@ const bgCandidates: string[] = (bgListData as string[]).filter((f) =>
   /\.(jpe?g|png|webp)$/i.test(f)
 );
 
-// Default OG image: the first photo on file, sorted chronologically.
-// Stable across builds (doesn't shift when new photos arrive).
-const defaultPhoto = (photosData as any[])
-  .filter((p) => p.file)
-  .sort((a, b) => (a.taken_at || "").localeCompare(b.taken_at || ""))[0];
+// Default OG image for the homepage / any page that doesn't override it.
+// Picks the first "best" photo (curated subset in <PCT>/best_photos/ — see
+// build_data.py). Sorted by filename for stability across builds — Facebook
+// caches OG images aggressively, so we don't want this URL changing every
+// build or every page render. To rotate the link-preview image, just
+// reorder the files in best_photos/ (or pick a single one).
+// Falls back to the chronologically-first photo if no curated set exists.
+const allPhotos = photosData as any[];
+const bestPhotos = allPhotos.filter((p) => p.best && p.file);
+const defaultPhoto =
+  bestPhotos.sort((a, b) => (a.file || "").localeCompare(b.file || ""))[0] ??
+  allPhotos
+    .filter((p) => p.file)
+    .sort((a, b) => (a.taken_at || "").localeCompare(b.taken_at || ""))[0];
 const DEFAULT_OG_IMAGE = defaultPhoto ? `/photos/${defaultPhoto.file}` : "/favicon.svg";
 
 const SITE_NAME = "Emily's PCT 2026";

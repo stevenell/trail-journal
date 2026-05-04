@@ -1,7 +1,7 @@
 ---
 day: 25
 date: "2026-04-29"
-title: "Day #25:   04/29/2026 - Wednesday"
+title: "Day #25: 04/29/2026 - Wednesday"
 goal: "Hot Springs"
 miles_today: "18.20"
 total_pct: "307.8"
@@ -12,8 +12,10 @@ lat: 34.34035
 lon: -117.17705
 ---
 
-Still cold last night - brr 🥶  
-Slow start - rolled down sandy boulder paths.  
+Still cold last night - brr 🥶
+
+Slow start - rolled down sandy boulder paths.
+
 Can hear the rush of a river but can't see it yet...
 
 Beautiful Big pines and the river rolling and rushing and making mini waterfalls as we walk. We skirt the river all morning - sometimes crossing.
@@ -34,4 +36,6 @@ Sometimes the trail is sketchy and very narrow - the width of a foot with a stee
 
 Finally reached a valley of sorts and the Deep Creek Hot Springs. Setup tents, filtered water, ate dinner. Went in soaked in two separate hot springs with Devon (clothing optional - we saw two fully nude dudes) (one at the river and one up in the side of a rock pile).
 
-Devon went to bed - I stayed up in the river hot spring soaking my feet in the hot spring and then cold river water.  Some stars - but moon is almost full (?) and very bright 😎.
+Devon went to bed - I stayed up in the river hot spring soaking my feet in the hot spring and then cold river water. Some stars - but moon is almost full (?) and very bright 😎.
+
+My tent was setup on a slant (best space I could find) and I kept sliding off my sleeping pad - to compensate I used my backpack as a bolster to hold me in place on my sleeping pad (spooned with my backpack).
