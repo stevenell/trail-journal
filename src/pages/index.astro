@@ -72,9 +72,16 @@ function sideMilesFor(d: any): string | null {
   return diff > 0.05 ? diff.toFixed(2) : null;
 }
 
-// OG: latest day's first photo + stat-driven description.
+// OG: pick from <PCT>/best_photos/ (curated subset, flagged with `best:true`
+// in photos.json). Sorted by filename for stability across builds — Facebook
+// caches OG images aggressively, so we don't want this URL changing every
+// push. Falls back to the latest day's first photo if no best photos exist.
+const bestPhotos = (photosData as any[]).filter((p) => p.best && p.file);
 const latestPhoto = latestDay ? photosByDay.get(latestDay.data.day)?.[0] : null;
-const ogImage = latestPhoto ? `/photos/${latestPhoto.file}` : undefined;
+const ogPhoto =
+  bestPhotos.sort((a, b) => (a.file || "").localeCompare(b.file || ""))[0] ??
+  latestPhoto;
+const ogImage = ogPhoto ? `/photos/${ogPhoto.file}` : undefined;
 const ogDescription = (() => {
   const parts: string[] = [];
   if (totalDays) parts.push(`${totalDays} days`);
