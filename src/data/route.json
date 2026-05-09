@@ -14844,6 +14844,57 @@
         "stop_type": "Camp",
         "description": null
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -117.85105,
+          34.35524
+        ]
+      },
+      "properties": {
+        "kind": "stop",
+        "name": "Day 32 - Camp",
+        "day": 32,
+        "stop_type": "Camp",
+        "description": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -117.99239,
+          34.36641
+        ]
+      },
+      "properties": {
+        "kind": "stop",
+        "name": "Day 33 - Camp",
+        "day": 33,
+        "stop_type": "Camp",
+        "description": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -118.10136,
+          34.39898
+        ]
+      },
+      "properties": {
+        "kind": "stop",
+        "name": "Day 34 - Camp",
+        "day": 34,
+        "stop_type": "Camp",
+        "description": null
+      }
     }
   ]
 }
