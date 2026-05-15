@@ -2,6 +2,7 @@
 day: 34
 date: "2026-05-08"
 title: "Day #34 05/08/2026 - Friday"
+goal: "~ 15 miles"
 miles_today: "14.33 miles"
 total_pct: "420.8"
 total_all: "436.22 miles"
@@ -10,8 +11,6 @@ stop_type: "Camp"
 lat: 34.39898
 lon: -118.10136
 ---
-
-Goal:
 
 Hiked out and along the creek and shortly thereafter started the day with a climb.
 
